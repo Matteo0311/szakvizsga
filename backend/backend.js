@@ -11,7 +11,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'konyv'
+    database: 'higherorlower'
     })
 app.get('/', (req, res) => {
   res.send('Hello World!')
