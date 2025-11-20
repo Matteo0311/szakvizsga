@@ -30,7 +30,8 @@ app.get('/orszagAdatBetolt', (req, res) => {
     });
 });
 
-// Beosztott végpontjai
+
+// FMáté végpontjai
 
 
 app.listen(port, () => {
