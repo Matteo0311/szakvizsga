@@ -17,10 +17,10 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-// Máté végpontjai
+// LMáté végpontjai
 
 
-// Beosztott végpontjai
+// FMáté végpontjai
 
 
 app.listen(port, () => {
