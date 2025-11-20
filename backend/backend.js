@@ -11,14 +11,24 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'konyv'
+    database: 'higherorlower'
     })
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-// Máté végpontjai
-
+// ----- Máté végpontjai -----
+// Ország adat betöltése
+app.get('/orszagAdatBetolt', (req, res) => {
+    pool.query('SELECT * FROM orszag', (error, results) => {
+        if (error) {
+            console.error('Hiba az adatok betöltésekor:', error);
+            res.status(500).json({ error: 'Hiba az adatok betöltésekor' });
+        } else {
+            res.json(results);
+        }
+    });
+});
 
 // Beosztott végpontjai
 
