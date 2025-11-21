@@ -11,27 +11,25 @@ const FociJatekModosit=({kivalasztott})=>{
         const [keresesSzoveg, setKeresesSzoveg] = useState('')
         const [keresesEredmeny, setKeresesEredmeny] = useState([])
         const [keresEsben, setKeresEsben] = useState(false)
-        const [modositandoJatek, setModositandoJatek] = useState({
-                jatek_id: '',
-                hazai_csapat: '',
-                idegen_csapat: '',
-                datum: '',
-                eredmeny: '',
-                helyszin: ''
+        const [modositandoJatekos, setModositandoJatekos] = useState({
+                foci_jatekos_id: '',
+                foci_jatekos_nev: '',
+                foci_jatekos_ertekeles: '',
+                foci_jatekos_piaci_ertek: '',
+                foci_jatekos_eletkor: ''
         })
-        const [ujJatek, setUjJatek] = useState({
-                hazai_csapat: '',
-                idegen_csapat: '',
-                datum: '',
-                eredmeny: '',
-                helyszin: ''
+        const [ujJatekos, setUjJatekos] = useState({
+                foci_jatekos_nev: '',
+                foci_jatekos_ertekeles: '',
+                foci_jatekos_piaci_ertek: '',
+                foci_jatekos_eletkor: ''
         })
 
         const leToltes=async ()=>{
                 setTolt(true)
                 setHiba(false)
                 try{
-                        const response=await fetch(Cim.Cim+"/fociJatekAdatBetolt")
+                        const response=await fetch(Cim.Cim+"/fociJatekosAdatBetolt")
                         if (response.ok) {
                                 const data=await response.json()
                                 setAdatok(data)
@@ -60,7 +58,7 @@ const FociJatekModosit=({kivalasztott})=>{
 
                 setKeresEsben(true);
                 try {
-                        const response = await fetch(`${Cim.Cim}/fociJatekKereses/${encodeURIComponent(searchTerm)}`);
+                        const response = await fetch(`${Cim.Cim}/fociJatekosKereses/${encodeURIComponent(searchTerm)}`);
                         if (response.ok) {
                                 const data = await response.json();
                                 setKeresesEredmeny(data);
@@ -96,124 +94,119 @@ const FociJatekModosit=({kivalasztott})=>{
         const megjelenitoAdatok = keresesSzoveg.trim() ? keresesEredmeny : adatok;
 
         // Új játék hozzáadása
-        const UjJatekFeluletMegnyitas = () => {
-                setUjJatek({
-                        hazai_csapat: '',
-                        idegen_csapat: '',
-                        datum: '',
-                        eredmeny: '',
-                        helyszin: ''
+        const UjJatekosFeluletMegnyitas = () => {
+                setUjJatekos({
+                        foci_jatekos_nev: '',
+                        foci_jatekos_ertekeles: '',
+                        foci_jatekos_piaci_ertek: '',
+                        foci_jatekos_eletkor: ''
                 });
                 setUjJatekFelulet(true);
         };
 
-        const UjJatekFeluletBezaras = () => {
+        const UjJatekosFeluletBezaras = () => {
                 setUjJatekFelulet(false);
-                setUjJatek({
-                        hazai_csapat: '',
-                        idegen_csapat: '',
-                        datum: '',
-                        eredmeny: '',
-                        helyszin: ''
+                setUjJatekos({
+                        foci_jatekos_nev: '',
+                        foci_jatekos_ertekeles: '',
+                        foci_jatekos_piaci_ertek: '',
+                        foci_jatekos_eletkor: ''
                 });
         };
 
-        const UjJatekInputValtozas = (e) => {
+        const UjJatekosInputValtozas = (e) => {
                 const { name, value } = e.target;
-                setUjJatek(prev => ({
+                setUjJatekos(prev => ({
                         ...prev,
                         [name]: value
                 }));
         };
 
-        const UjJatekHozzaadas = async () => {
-                if (!ujJatek.hazai_csapat || !ujJatek.idegen_csapat || !ujJatek.datum) {
-                        alert('Kérlek töltsd ki legalább a csapatokat és a dátumot!');
+        const UjJatekosHozzaadas = async () => {
+                if (!ujJatekos.foci_jatekos_nev) {
+                        alert('Kérlek add meg a játékos nevét!');
                         return;
                 }
 
                 try {
-                        const response = await fetch(`${Cim.Cim}/ujFociJatekFelvitele`, {
+                        const response = await fetch(`${Cim.Cim}/ujFociJatekosFelvitele`, {
                                 method: 'POST',
                                 headers: {
                                         'Content-Type': 'application/json',
                                 },
-                                body: JSON.stringify(ujJatek),
+                                body: JSON.stringify(ujJatekos),
                         });
 
                         if (response.ok) {
-                                alert('Új meccs sikeresen hozzáadva!');
-                                UjJatekFeluletBezaras();
+                                alert('Új játékos sikeresen hozzáadva!');
+                                UjJatekosFeluletBezaras();
                                 leToltes();
                         } else {
                                 const error = await response.json();
                                 alert(`Hiba történt: ${error.error}`);
                         }
                 } catch (error) {
-                        console.error('Hiba történt a meccs hozzáadása során:', error);
-                        alert('Hiba történt a meccs hozzáadása során!');
+                        console.error('Hiba történt a játékos hozzáadása során:', error);
+                        alert('Hiba történt a játékos hozzáadása során!');
                 }
         };
 
         // Módosítás
-        const ModositasFeluletMegnyitas = (jatek) => {
-                setModositandoJatek({
-                        jatek_id: jatek.jatek_id,
-                        hazai_csapat: jatek.hazai_csapat,
-                        idegen_csapat: jatek.idegen_csapat,
-                        datum: jatek.datum,
-                        eredmeny: jatek.eredmeny,
-                        helyszin: jatek.helyszin
+        const ModositasFeluletMegnyitas = (jatekos) => {
+                setModositandoJatekos({
+                        foci_jatekos_id: jatekos.foci_jatekos_id,
+                        foci_jatekos_nev: jatekos.foci_jatekos_nev,
+                        foci_jatekos_ertekeles: jatekos.foci_jatekos_ertekeles,
+                        foci_jatekos_piaci_ertek: jatekos.foci_jatekos_piaci_ertek,
+                        foci_jatekos_eletkor: jatekos.foci_jatekos_eletkor
                 });
                 setModositasFelulet(true);
         };
 
         const ModositasFeluletBezaras = () => {
                 setModositasFelulet(false);
-                setModositandoJatek({
-                        jatek_id: '',
-                        hazai_csapat: '',
-                        idegen_csapat: '',
-                        datum: '',
-                        eredmeny: '',
-                        helyszin: ''
+                setModositandoJatekos({
+                        foci_jatekos_id: '',
+                        foci_jatekos_nev: '',
+                        foci_jatekos_ertekeles: '',
+                        foci_jatekos_piaci_ertek: '',
+                        foci_jatekos_eletkor: ''
                 });
         };
 
         const InputValtozas = (e) => {
                 const { name, value } = e.target;
-                setModositandoJatek(prev => ({
+                setModositandoJatekos(prev => ({
                         ...prev,
                         [name]: value
                 }));
         };
 
-        const JatekModositas = async () => {
-                if (!modositandoJatek.hazai_csapat || !modositandoJatek.idegen_csapat || !modositandoJatek.datum) {
-                        alert('Kérlek töltsd ki legalább a csapatokat és a dátumot!');
+        const JatekosModositas = async () => {
+                if (!modositandoJatekos.foci_jatekos_nev) {
+                        alert('Kérlek töltsd ki legalább a játékos nevét!');
                         return;
                 }
 
-                const megerosites = window.confirm(`Biztos, hogy módosítani szeretnéd a meccs adatait?`);
+                const megerosites = window.confirm(`Biztos, hogy módosítani szeretnéd a játékos adatait?`);
                 if (!megerosites) return;
 
                 try {
-                        const response = await fetch(`${Cim.Cim}/fociJatekAdatModosit/${modositandoJatek.jatek_id}`, {
+                        const response = await fetch(`${Cim.Cim}/fociJatekosAdatModosit/${modositandoJatekos.foci_jatekos_id}`, {
                                 method: 'PUT',
                                 headers: {
                                         'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                        hazai_csapat: modositandoJatek.hazai_csapat,
-                                        idegen_csapat: modositandoJatek.idegen_csapat,
-                                        datum: modositandoJatek.datum,
-                                        eredmeny: modositandoJatek.eredmeny,
-                                        helyszin: modositandoJatek.helyszin
+                                        foci_jatekos_nev: modositandoJatekos.foci_jatekos_nev,
+                                        foci_jatekos_ertekeles: modositandoJatekos.foci_jatekos_ertekeles,
+                                        foci_jatekos_piaci_ertek: modositandoJatekos.foci_jatekos_piaci_ertek,
+                                        foci_jatekos_eletkor: modositandoJatekos.foci_jatekos_eletkor
                                 }),
                         });
 
                         if (response.ok) {
-                                alert('A meccs adatai sikeresen módosítva!');
+                                alert('A játékos adatai sikeresen módosítva!');
                                 ModositasFeluletBezaras();
                                 leToltes();
                         } else {
@@ -236,85 +229,77 @@ const FociJatekModosit=({kivalasztott})=>{
                 )
         else return (
                 <div>
-                  {modositasFelulet && (
+                                  {modositasFelulet && (
                         <div className="modal-hatter">
                           <div className="modal-tartalom">
                                 <div className="modal-fejlec">
-                                  <h3>Meccs adatainak módosítása</h3>
+                                                        <h3>Játékos adatainak módosítása</h3>
                                   <button className="bezaras-gomb" onClick={ModositasFeluletBezaras}>×</button>
                                 </div>
                                 <div className="modal-test">
-                                  <div className="input-csoport">
-                                        <label>Hazai csapat:</label>
-                                        <input type="text" name="hazai_csapat" value={modositandoJatek.hazai_csapat} onChange={InputValtozas} placeholder="Hazai csapat" />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Idegen csapat:</label>
-                                        <input type="text" name="idegen_csapat" value={modositandoJatek.idegen_csapat} onChange={InputValtozas} placeholder="Idegen csapat" />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Dátum:</label>
-                                        <input type="datetime-local" name="datum" value={modositandoJatek.datum} onChange={InputValtozas} />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Eredmény:</label>
-                                        <input type="text" name="eredmeny" value={modositandoJatek.eredmeny} onChange={InputValtozas} placeholder="Pl.: 2-1" />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Helyszín:</label>
-                                        <input type="text" name="helyszin" value={modositandoJatek.helyszin} onChange={InputValtozas} placeholder="Stadion / Város" />
-                                  </div>
+                                                        <div className="input-csoport">
+                                                                <label>Név:</label>
+                                                                <input type="text" name="foci_jatekos_nev" value={modositandoJatekos.foci_jatekos_nev} onChange={InputValtozas} placeholder="Játékos neve" />
+                                                        </div>
+                                                        <div className="input-csoport">
+                                                                <label>Értékelés:</label>
+                                                                <input type="number" name="foci_jatekos_ertekeles" value={modositandoJatekos.foci_jatekos_ertekeles} onChange={InputValtozas} placeholder="Pl.: 7.5" step="0.1" />
+                                                        </div>
+                                                        <div className="input-csoport">
+                                                                <label>Piaci érték:</label>
+                                                                <input type="number" name="foci_jatekos_piaci_ertek" value={modositandoJatekos.foci_jatekos_piaci_ertek} onChange={InputValtozas} placeholder="Pl.: 1000000" />
+                                                        </div>
+                                                        <div className="input-csoport">
+                                                                <label>Életkor:</label>
+                                                                <input type="number" name="foci_jatekos_eletkor" value={modositandoJatekos.foci_jatekos_eletkor} onChange={InputValtozas} placeholder="Életkor" />
+                                                        </div>
                                 </div>
                                 <div className="modal-lablelc">
-                                  <button className="admin-button" onClick={JatekModositas}>Módosítások mentése</button>
+                                                        <button className="admin-button" onClick={JatekosModositas}>Módosítások mentése</button>
                                   <button className="admin-button visszavon" onClick={ModositasFeluletBezaras}>Mégsem</button>
                                 </div>
                           </div>
                         </div>
                   )}
 
-                  {ujJatekFelulet && (
+                        {ujJatekFelulet && (
                         <div className="modal-hatter">
                           <div className="modal-tartalom">
                                 <div className="modal-fejlec">
-                                  <h3>Új meccs hozzáadása</h3>
-                                  <button className="bezaras-gomb" onClick={UjJatekFeluletBezaras}>×</button>
+                                            <h3>Új játékos hozzáadása</h3>
+                                            <button className="bezaras-gomb" onClick={UjJatekosFeluletBezaras}>×</button>
                                 </div>
                                 <div className="modal-test">
-                                  <div className="input-csoport">
-                                        <label>Hazai csapat:</label>
-                                        <input type="text" name="hazai_csapat" value={ujJatek.hazai_csapat} onChange={UjJatekInputValtozas} placeholder="Hazai csapat" />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Idegen csapat:</label>
-                                        <input type="text" name="idegen_csapat" value={ujJatek.idegen_csapat} onChange={UjJatekInputValtozas} placeholder="Idegen csapat" />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Dátum:</label>
-                                        <input type="datetime-local" name="datum" value={ujJatek.datum} onChange={UjJatekInputValtozas} />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Eredmény:</label>
-                                        <input type="text" name="eredmeny" value={ujJatek.eredmeny} onChange={UjJatekInputValtozas} placeholder="Pl.: 2-1 (opcionális)" />
-                                  </div>
-                                  <div className="input-csoport">
-                                        <label>Helyszín:</label>
-                                        <input type="text" name="helyszin" value={ujJatek.helyszin} onChange={UjJatekInputValtozas} placeholder="Stadion / Város" />
-                                  </div>
+                                            <div className="input-csoport">
+                                                    <label>Név:</label>
+                                                    <input type="text" name="foci_jatekos_nev" value={ujJatekos.foci_jatekos_nev} onChange={UjJatekosInputValtozas} placeholder="Játékos neve" />
+                                            </div>
+                                            <div className="input-csoport">
+                                                    <label>Értékelés:</label>
+                                                    <input type="number" name="foci_jatekos_ertekeles" value={ujJatekos.foci_jatekos_ertekeles} onChange={UjJatekosInputValtozas} placeholder="Pl.: 7.5" step="0.1" />
+                                            </div>
+                                            <div className="input-csoport">
+                                                    <label>Piaci érték:</label>
+                                                    <input type="number" name="foci_jatekos_piaci_ertek" value={ujJatekos.foci_jatekos_piaci_ertek} onChange={UjJatekosInputValtozas} placeholder="Pl.: 1000000" />
+                                            </div>
+                                            <div className="input-csoport">
+                                                    <label>Életkor:</label>
+                                                    <input type="number" name="foci_jatekos_eletkor" value={ujJatekos.foci_jatekos_eletkor} onChange={UjJatekosInputValtozas} placeholder="Életkor" />
+                                            </div>
                                 </div>
                                 <div className="modal-lablelc">
-                                  <button className="admin-button" onClick={UjJatekHozzaadas}>Meccs hozzáadása</button>
-                                  <button className="admin-button visszavon" onClick={UjJatekFeluletBezaras}>Mégsem</button>
+                                            <button className="admin-button" onClick={UjJatekosHozzaadas}>Játékos hozzáadása</button>
+                                            <button className="admin-button visszavon" onClick={UjJatekosFeluletBezaras}>Mégsem</button>
                                 </div>
                           </div>
                         </div>
                   )}
 
                   <div className="container">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                          <h2 style={{ margin: 0 }}>Foci meccsek kezelése</h2>
-                          <button className="admin-button" onClick={UjJatekFeluletMegnyitas}>Új meccs hozzáadása</button>
-                        </div>
+                                                                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                                                                                        <h2 style={{ margin: 0 }}>Foci játékosok kezelése</h2>
+                                                                                                        <button className="admin-button" onClick={UjJatekosFeluletMegnyitas}>Új játékos hozzáadása</button>
+                                                                                                </div>
 
                         <div className="kereses-container">
                           <div className="kereses-input-csoport">
@@ -331,38 +316,36 @@ const FociJatekModosit=({kivalasztott})=>{
 
                         <div className="table-container">
                           <table className="adat-tablazat">
-                                <thead>
-                                  <tr>
-                                        <th className="index-column">#</th>
-                                        <th>Hazai</th>
-                                        <th>Idegen</th>
-                                        <th>Dátum</th>
-                                        <th>Eredmény</th>
-                                        <th>Helyszín</th>
-                                        <th>Műveletek</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {megjelenitoAdatok.length > 0 ? (
-                                        megjelenitoAdatok.map((elem,index)=>(
-                                          <tr key={elem.jatek_id || index} className="adat-sor">
-                                                <td>{keresesSzoveg.trim() ? elem.jatek_id : index + 1}</td>
-                                                <td className="orszag-nev">{elem.hazai_csapat}</td>
-                                                <td className="orszag-nev">{elem.idegen_csapat}</td>
-                                                <td className="szam-adat">{elem.datum}</td>
-                                                <td className="szam-adat">{elem.eredmeny || '-'}</td>
-                                                <td className="szam-adat">{elem.helyszin || '-'}</td>
-                                                <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
-                                          </tr>
-                                        ))
-                                  ) : (
-                                        <tr>
-                                          <td colSpan="7" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
-                                                {keresesSzoveg.trim() ? 'Nincs találat a keresési feltételre' : 'Nincs megjeleníthető adat'}
-                                          </td>
-                                        </tr>
-                                  )}
-                                </tbody>
+                                          <thead>
+                                            <tr>
+                                                    <th className="index-column">#</th>
+                                                    <th>Név</th>
+                                                    <th>Értékelés</th>
+                                                    <th>Piaci érték</th>
+                                                    <th>Életkor</th>
+                                                    <th>Műveletek</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {megjelenitoAdatok.length > 0 ? (
+                                                    megjelenitoAdatok.map((elem,index)=>(
+                                                        <tr key={elem.foci_jatekos_id || index} className="adat-sor">
+                                                                <td>{keresesSzoveg.trim() ? elem.foci_jatekos_id : index + 1}</td>
+                                                                <td className="orszag-nev">{elem.foci_jatekos_nev}</td>
+                                                                <td className="szam-adat">{elem.foci_jatekos_ertekeles ?? '-'}</td>
+                                                                <td className="szam-adat">{elem.foci_jatekos_piaci_ertek ?? '-'}</td>
+                                                                <td className="szam-adat">{elem.foci_jatekos_eletkor ?? '-'}</td>
+                                                                <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
+                                                        </tr>
+                                                    ))
+                                            ) : (
+                                                    <tr>
+                                                        <td colSpan="6" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+                                                                {keresesSzoveg.trim() ? 'Nincs találat a keresési feltételre' : 'Nincs megjeleníthető adat'}
+                                                        </td>
+                                                    </tr>
+                                            )}
+                                          </tbody>
                           </table>
                         </div>
 
