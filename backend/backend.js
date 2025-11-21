@@ -3,6 +3,9 @@ const app = express()
 const port = 3000
 const mysql = require('mysql')
 const cors = require('cors')
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = 'A_TE_SZAKDOLGOZAT_TITKOS_KULCSOD';
+
 app.use(cors())
 
 app.use(express.json())
@@ -101,6 +104,96 @@ app.get('/orszagKereses/:searchTerm', (req, res) => {
         }
     });
 });
+
+// Ország törlése ID alapján
+app.delete('/orszagTorles/:id', (req, res) => {
+    const orszag_id_from_url = req.params.id;
+    pool.query(
+        'DELETE FROM orszag WHERE orszag_id = ?',
+        [orszag_id_from_url],
+        (error, results) => {
+            if (error) {
+                console.error('Hiba az ország törlésekor:', error);
+                res.status(500).json({ error: 'Hiba az ország törlésekor' });
+            } else {
+                res.json({ message: 'Ország törölve', results });
+            }
+        }
+    );
+});
+
+// -----------------------------------------------------------------------------------
+// FIÓKKEZELÉS
+// BEJELENTKEZÉS
+// -----------------------------------------------------------------------------------
+
+// 1. JWT Ellenőrző Middleware (EZ VÉDI A VÉGPONTOKAT)
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    // Elvárás: "Bearer <token>"
+    const token = authHeader && authHeader.split(' ')[1]; 
+
+    if (token == null) {
+        // 401: Unauthorized (Token hiányzik)
+        return res.status(401).json({ message: 'Hozzáférés megtagadva. Token hiányzik.' }); 
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) {
+            // 403: Forbidden (Érvénytelen, lejárt token)
+            return res.status(403).json({ message: 'Token érvénytelen vagy lejárt.' }); 
+        }
+        req.user = user; 
+        next(); 
+    });
+}
+
+// 2. Bejelentkezési Végpont (TOKEN GENERÁLÁSA)
+app.post('/login', (req, res) => {
+    const { felh_nev, jelszo } = req.body; 
+
+    // SHA256-alapú hitelesítés az adatbázisban
+    const sqlQuery = `
+        SELECT felh_id, felh_nev, felh_szerepkor 
+        FROM account 
+        WHERE felh_nev = ? AND felh_jelszo = SHA2(?, 256)
+    `;
+
+    pool.query(
+        sqlQuery,
+        [felh_nev, jelszo], 
+        (error, results) => {
+            if (error) {
+                console.error('Adatbázis hiba a bejelentkezéskor:', error);
+                return res.status(500).json({ error: 'Adatbázis hiba.' });
+            }
+
+            if (results.length === 0) {
+                return res.status(401).json({ message: 'Hibás felhasználónév vagy jelszó' });
+            }
+
+            const user = results[0];
+            
+            // Sikeres bejelentkezés: JWT token generálása
+            const token = jwt.sign(
+                { 
+                    id: user.felh_id, 
+                    nev: user.felh_nev,
+                    szerepkor: user.felh_szerepkor 
+                }, 
+                JWT_SECRET,
+                { expiresIn: '1h' } // Token 1 óra múlva lejár
+            );
+
+            res.json({ 
+                message: 'Sikeres bejelentkezés', 
+                token: token,
+                szerepkor: user.felh_szerepkor
+            });
+        }
+    );
+});
+
 // FMáté végpontjai
 
 
