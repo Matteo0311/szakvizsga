@@ -66,6 +66,30 @@ app.post('/ujOrszagFelvitele', (req, res) => {
     );
 });
 
+// Országok keresése név (részleges egyezés) VAGY ID alapján
+
+app.get('/orszagKereses/:searchTerm', (req, res) => {
+    const searchTerm = req.params.searchTerm; 
+    
+    const sqlQuery = `
+        SELECT * FROM orszag 
+        WHERE orszag_nev LIKE CONCAT('%', ?, '%') 
+        OR orszag_id = ?
+    `;
+
+    pool.query(sqlQuery, [searchTerm, searchTerm], (error, results) => {
+        if (error) {
+            console.error('Hiba az ország keresésekor:', error);
+            res.status(500).json({ error: 'Hiba az ország keresésekor' });
+        } else {
+
+             if (results.length === 0) {
+                 return res.status(404).json({ message: 'Nincs találat a keresési feltételre.' });
+             }
+            res.json(results);
+        }
+    });
+});
 // FMáté végpontjai
 
 

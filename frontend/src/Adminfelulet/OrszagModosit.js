@@ -8,6 +8,9 @@ const OrszagModosit=({kivalasztott})=>{
     const [hiba,setHiba]=useState(false)
     const [modositasFelulet, setModositasFelulet] = useState(false)
     const [ujOrszagFelulet, setUjOrszagFelulet] = useState(false)
+    const [keresesSzoveg, setKeresesSzoveg] = useState('')
+    const [keresesEredmeny, setKeresesEredmeny] = useState([])
+    const [keresEsben, setKeresEsben] = useState(false)
     const [modositandoOrszag, setModositandoOrszag] = useState({
         orszag_id: '',
         orszag_nev: '',
@@ -50,6 +53,56 @@ const OrszagModosit=({kivalasztott})=>{
     useEffect(()=>{
         leToltes()
     },[])
+
+    // --------------------- Keresés funkció ----------------- //
+
+    const keresesVegrehajtas = async (searchTerm) => {
+        if (!searchTerm.trim()) {
+            setKeresesEredmeny([]);
+            return;
+        }
+
+        setKeresEsben(true);
+        
+        try {
+            const response = await fetch(`${Cim.Cim}/orszagKereses/${encodeURIComponent(searchTerm)}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                setKeresesEredmeny(data);
+            } else if (response.status === 404) {
+                setKeresesEredmeny([]);
+            } else {
+                console.error("Keresési hiba:", response.status, response.statusText);
+                setKeresesEredmeny([]);
+            }
+        } catch (error) {
+            console.error("Fetch hiba a keresés során:", error);
+            setKeresesEredmeny([]);
+        } finally {
+            setKeresEsben(false);
+        }
+    };
+
+    const keresesInputValtozas = (e) => {
+        const value = e.target.value;
+        setKeresesSzoveg(value);
+        
+        // Debounced search - keressen 300ms késleltetéssel
+        clearTimeout(window.searchTimeout);
+        window.searchTimeout = setTimeout(() => {
+            keresesVegrehajtas(value);
+        }, 300);
+    };
+
+    const keresesTorles = () => {
+        setKeresesSzoveg('');
+        setKeresesEredmeny([]);
+        clearTimeout(window.searchTimeout);
+    };
+
+    // Meghatározzuk, hogy melyik adatokat jelenítjük meg (keresési eredmény vagy teljes lista)
+    const megjelenitoAdatok = keresesSzoveg.trim() ? keresesEredmeny : adatok;
 
     // --------------------- Új ország hozzáadásának folyamata ----------------- //
 
@@ -328,35 +381,80 @@ const OrszagModosit=({kivalasztott})=>{
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h2 style={{ margin: 0 }}>Városok</h2>
-            <button className="admin-button" onClick={UjOrszagFeluletMegnyitas}>Új ország hozzáadása</button>
-          </div>
-            <table className="adat-tablazat">
-                <thead>
-                    <tr>
-                      <th className="index-column">#</th>
-                        <th>Ország</th>
-                        <th>Népessége</th>
-                        <th>Nagysága (km²)</th>
-                        <th>GDP (millió $)</th>
-                        <th>Adatmódosítás</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {adatok.map((elem,index)=>(
-                        <tr key={index} className="adat-sor">
-                            <td>{index + 1}</td>
-                            <td>{elem.orszag_nev}</td>
-                            <td>{elem.orszag_nepesseg} Fő</td>
-                            <td>{elem.orszag_nagysag} km²</td>
-                            <td>{elem.orszag_gdp} millió $</td>
-                            <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Adatmódosítás</button></td>
+          <div className="container">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0 }}>Országok kezelése</h2>
+              <button className="admin-button" onClick={UjOrszagFeluletMegnyitas}>Új ország hozzáadása</button>
+            </div>
+            
+            {/* Keresőmező */}
+            <div className="kereses-container">
+              <div className="kereses-input-csoport">
+                <input
+                  type="text"
+                  className="kereses-input"
+                  placeholder="Keresés országnév vagy ID alapján..."
+                  value={keresesSzoveg}
+                  onChange={keresesInputValtozas}
+                />
+                {keresesSzoveg && (
+                  <button className="kereses-torles" onClick={keresesTorles}>
+                    ×
+                  </button>
+                )}
+                {keresEsben && (
+                  <div className="kereses-loading">🔍</div>
+                )}
+              </div>
+              {keresesSzoveg && (
+                <div className="kereses-info">
+                  {keresesEredmeny.length > 0 
+                    ? `${keresesEredmeny.length} találat` 
+                    : 'Nincs találat'
+                  }
+                </div>
+              )}
+            </div>
+            
+            <div className="table-container">
+              <table className="adat-tablazat">
+                  <thead>
+                      <tr>
+                        <th className="index-column">#</th>
+                          <th>Ország</th>
+                          <th>Népessége</th>
+                          <th>Nagysága (km²)</th>
+                          <th>GDP (millió $)</th>
+                          <th>Műveletek</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {megjelenitoAdatok.length > 0 ? (
+                        megjelenitoAdatok.map((elem,index)=>(
+                            <tr key={elem.orszag_id} className="adat-sor">
+                                <td>{keresesSzoveg.trim() ? elem.orszag_id : index + 1}</td>
+                                <td className="orszag-nev">{elem.orszag_nev}</td>
+                                <td className="szam-adat">{elem.orszag_nepesseg.toLocaleString()} fő</td>
+                                <td className="szam-adat">{elem.orszag_nagysag.toLocaleString()} km²</td>
+                                <td className="szam-adat">{elem.orszag_gdp.toLocaleString()} M$</td>
+                                <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
+                            </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+                            {keresesSzoveg.trim() ? 'Nincs találat a keresési feltételre' : 'Nincs megjeleníthető adat'}
+                          </td>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            <button className="admin-button" onClick={() => window.history.back()}>Visszatérés az adminfelületre</button>
+                      )}
+                  </tbody>
+              </table>
+            </div>
+            
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+              <button className="admin-button" onClick={() => window.history.back()}>Visszatérés az adminfelületre</button>
+            </div>
+          </div>
         </div>
     )
 }
