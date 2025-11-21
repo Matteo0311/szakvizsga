@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import Admin from "./Admin.css"
 import { useState,useEffect } from "react"
 import Cim from "../Cim"
@@ -237,103 +236,103 @@ const FociJatekModosit=({kivalasztott})=>{
                 )
         else return (
                 <div>
-                    {modositasFelulet && (
+                  {modositasFelulet && (
                         <div className="modal-hatter">
-                            <div className="modal-tartalom">
+                          <div className="modal-tartalom">
                                 <div className="modal-fejlec">
-                                    <h3>Meccs adatainak módosítása</h3>
-                                    <button className="bezaras-gomb" onClick={ModositasFeluletBezaras}>×</button>
+                                  <h3>Meccs adatainak módosítása</h3>
+                                  <button className="bezaras-gomb" onClick={ModositasFeluletBezaras}>×</button>
                                 </div>
                                 <div className="modal-test">
-                                    <div className="input-csoport">
+                                  <div className="input-csoport">
                                         <label>Hazai csapat:</label>
                                         <input type="text" name="hazai_csapat" value={modositandoJatek.hazai_csapat} onChange={InputValtozas} placeholder="Hazai csapat" />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Idegen csapat:</label>
                                         <input type="text" name="idegen_csapat" value={modositandoJatek.idegen_csapat} onChange={InputValtozas} placeholder="Idegen csapat" />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Dátum:</label>
                                         <input type="datetime-local" name="datum" value={modositandoJatek.datum} onChange={InputValtozas} />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Eredmény:</label>
                                         <input type="text" name="eredmeny" value={modositandoJatek.eredmeny} onChange={InputValtozas} placeholder="Pl.: 2-1" />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Helyszín:</label>
                                         <input type="text" name="helyszin" value={modositandoJatek.helyszin} onChange={InputValtozas} placeholder="Stadion / Város" />
-                                    </div>
+                                  </div>
                                 </div>
                                 <div className="modal-lablelc">
-                                    <button className="admin-button" onClick={JatekModositas}>Módosítások mentése</button>
-                                    <button className="admin-button visszavon" onClick={ModositasFeluletBezaras}>Mégsem</button>
+                                  <button className="admin-button" onClick={JatekModositas}>Módosítások mentése</button>
+                                  <button className="admin-button visszavon" onClick={ModositasFeluletBezaras}>Mégsem</button>
                                 </div>
-                            </div>
+                          </div>
                         </div>
-                    )}
+                  )}
 
-                    {ujJatekFelulet && (
+                  {ujJatekFelulet && (
                         <div className="modal-hatter">
-                            <div className="modal-tartalom">
+                          <div className="modal-tartalom">
                                 <div className="modal-fejlec">
-                                    <h3>Új meccs hozzáadása</h3>
-                                    <button className="bezaras-gomb" onClick={UjJatekFeluletBezaras}>×</button>
+                                  <h3>Új meccs hozzáadása</h3>
+                                  <button className="bezaras-gomb" onClick={UjJatekFeluletBezaras}>×</button>
                                 </div>
                                 <div className="modal-test">
-                                    <div className="input-csoport">
+                                  <div className="input-csoport">
                                         <label>Hazai csapat:</label>
                                         <input type="text" name="hazai_csapat" value={ujJatek.hazai_csapat} onChange={UjJatekInputValtozas} placeholder="Hazai csapat" />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Idegen csapat:</label>
                                         <input type="text" name="idegen_csapat" value={ujJatek.idegen_csapat} onChange={UjJatekInputValtozas} placeholder="Idegen csapat" />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Dátum:</label>
                                         <input type="datetime-local" name="datum" value={ujJatek.datum} onChange={UjJatekInputValtozas} />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Eredmény:</label>
                                         <input type="text" name="eredmeny" value={ujJatek.eredmeny} onChange={UjJatekInputValtozas} placeholder="Pl.: 2-1 (opcionális)" />
-                                    </div>
-                                    <div className="input-csoport">
+                                  </div>
+                                  <div className="input-csoport">
                                         <label>Helyszín:</label>
                                         <input type="text" name="helyszin" value={ujJatek.helyszin} onChange={UjJatekInputValtozas} placeholder="Stadion / Város" />
-                                    </div>
+                                  </div>
                                 </div>
                                 <div className="modal-lablelc">
-                                    <button className="admin-button" onClick={UjJatekHozzaadas}>Meccs hozzáadása</button>
-                                    <button className="admin-button visszavon" onClick={UjJatekFeluletBezaras}>Mégsem</button>
+                                  <button className="admin-button" onClick={UjJatekHozzaadas}>Meccs hozzáadása</button>
+                                  <button className="admin-button visszavon" onClick={UjJatekFeluletBezaras}>Mégsem</button>
                                 </div>
-                            </div>
+                          </div>
                         </div>
-                    )}
+                  )}
 
-                    <div className="container">
+                  <div className="container">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <h2 style={{ margin: 0 }}>Foci meccsek kezelése</h2>
-                            <button className="admin-button" onClick={UjJatekFeluletMegnyitas}>Új meccs hozzáadása</button>
+                          <h2 style={{ margin: 0 }}>Foci meccsek kezelése</h2>
+                          <button className="admin-button" onClick={UjJatekFeluletMegnyitas}>Új meccs hozzáadása</button>
                         </div>
 
                         <div className="kereses-container">
-                            <div className="kereses-input-csoport">
+                          <div className="kereses-input-csoport">
                                 <input type="text" className="kereses-input" placeholder="Keresés csapat, helyszín vagy ID alapján..." value={keresesSzoveg} onChange={keresesInputValtozas} />
                                 {keresesSzoveg && (<button className="kereses-torles" onClick={keresesTorles}>×</button>)}
                                 {keresEsben && (<div className="kereses-loading">🔍</div>)}
-                            </div>
-                            {keresesSzoveg && (
+                          </div>
+                          {keresesSzoveg && (
                                 <div className="kereses-info">
-                                    {keresesEredmeny.length > 0 ? `${keresesEredmeny.length} találat` : 'Nincs találat'}
+                                  {keresesEredmeny.length > 0 ? `${keresesEredmeny.length} találat` : 'Nincs találat'}
                                 </div>
-                            )}
+                          )}
                         </div>
 
                         <div className="table-container">
-                            <table className="adat-tablazat">
+                          <table className="adat-tablazat">
                                 <thead>
-                                    <tr>
+                                  <tr>
                                         <th className="index-column">#</th>
                                         <th>Hazai</th>
                                         <th>Idegen</th>
@@ -341,12 +340,12 @@ const FociJatekModosit=({kivalasztott})=>{
                                         <th>Eredmény</th>
                                         <th>Helyszín</th>
                                         <th>Műveletek</th>
-                                    </tr>
+                                  </tr>
                                 </thead>
                                 <tbody>
-                                    {megjelenitoAdatok.length > 0 ? (
+                                  {megjelenitoAdatok.length > 0 ? (
                                         megjelenitoAdatok.map((elem,index)=>(
-                                            <tr key={elem.jatek_id || index} className="adat-sor">
+                                          <tr key={elem.jatek_id || index} className="adat-sor">
                                                 <td>{keresesSzoveg.trim() ? elem.jatek_id : index + 1}</td>
                                                 <td className="orszag-nev">{elem.hazai_csapat}</td>
                                                 <td className="orszag-nev">{elem.idegen_csapat}</td>
@@ -354,36 +353,24 @@ const FociJatekModosit=({kivalasztott})=>{
                                                 <td className="szam-adat">{elem.eredmeny || '-'}</td>
                                                 <td className="szam-adat">{elem.helyszin || '-'}</td>
                                                 <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
-                                            </tr>
+                                          </tr>
                                         ))
-                                    ) : (
+                                  ) : (
                                         <tr>
-                                            <td colSpan="7" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+                                          <td colSpan="7" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
                                                 {keresesSzoveg.trim() ? 'Nincs találat a keresési feltételre' : 'Nincs megjeleníthető adat'}
-                                            </td>
+                                          </td>
                                         </tr>
-                                    )}
+                                  )}
                                 </tbody>
-                            </table>
+                          </table>
                         </div>
 
                         <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                            <button className="admin-button" onClick={() => window.history.back()}>Visszatérés az adminfelületre</button>
+                          <button className="admin-button" onClick={() => window.history.back()}>Visszatérés az adminfelületre</button>
                         </div>
-                    </div>
+                  </div>
                 </div>
         )
-=======
-import React from 'react';
-import './AdminStyles.css';
-
-const FociJatekModosit = () => {
-    return (
-        <div className="container">
-            <h1>⚽ Foci Játék Módosítás</h1>
-            <p>Itt módosíthatod a focijáték beállításait.</p>
-        </div>
-    );
->>>>>>> 4fa1eb1fade2c5a163dbb3acfaf2f6d8f0648b3d
 }
 export default FociJatekModosit;
