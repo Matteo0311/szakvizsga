@@ -49,7 +49,7 @@ app.put('/orszagAdatModosit/:id', (req, res) => {
     );
 });
 // Új ország hozzáadása (Országnév, népesség, nagyság, gdp)
-app.post('/orszagAdatHozzaad', (req, res) => {
+app.post('/ujOrszagFelvitele', (req, res) => {
     const { orszag_nev, orszag_nepesseg, orszag_nagysag, orszag_gdp } = req.body;
 
     pool.query(
