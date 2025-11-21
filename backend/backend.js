@@ -29,6 +29,17 @@ app.get('/orszagAdatBetolt', (req, res) => {
         }
     });
 });
+
+app.get('/temaAdatBetolt', (req, res) => {
+    pool.query('SELECT * FROM fotema', (error, results) => {
+        if (error) {
+            console.error('Hiba az adatok betöltésekor:', error);
+            res.status(500).json({ error: 'Hiba az adatok betöltésekor' });
+        } else {
+            res.json(results);
+        }
+    });
+});
 // Országok összes adatának módosítása
 app.put('/orszagAdatModosit/:id', (req, res) => {
     const orszag_id_from_url = req.params.id;
