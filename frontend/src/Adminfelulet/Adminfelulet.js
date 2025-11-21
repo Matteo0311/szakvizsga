@@ -7,9 +7,6 @@ const Adminfelulet = () => {
         <div className="admin-container">
             <div className="admin-hero">
                 <div className="admin-hero-content">
-                    <div className="admin-icon">
-                        <span>👨‍💼</span>
-                    </div>
                     <h1 className="admin-title">Adminisztráció</h1>
                     <p className="admin-subtitle">Teljes körű rendszerkezelés és adatszerkesztés</p>
                 </div>
