@@ -11,19 +11,19 @@ const Temavalasztas = () => {
                 <button className="theme-btn">
                     <span className="theme-icon">⚽</span>
                     <span className="theme-title">Foci</span>
-                    <span className="theme-desc">Csapatok, bajnokságok</span>
+                    <span className="theme-desc">Játékos</span>
                 </button>
                 
                 <button className="theme-btn">
                     <span className="theme-icon">🌍</span>
                     <span className="theme-title">Országok</span>
-                    <span className="theme-desc">Népesség, területek</span>
+                    <span className="theme-desc">Népesség, területek, GDP</span>
                 </button>
                 
                 <button className="theme-btn">
                     <span className="theme-icon">🎵</span>
-                    <span className="theme-title">Zene</span>
-                    <span className="theme-desc">Előadók, számok</span>
+                    <span className="theme-title">Zene az jó</span>
+                    <span className="theme-desc">HAMAROSAN</span>
                 </button>
             </div>
         </div>
