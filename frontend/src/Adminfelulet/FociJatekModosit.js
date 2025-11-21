@@ -1,7 +1,11 @@
+import React from 'react';
+import './AdminStyles.css';
+
 const FociJatekModosit = () => {
     return (
-        <div>
-            <h1>Foci Játék Módosítás</h1>
+        <div className="container">
+            <h1>⚽ Foci Játék Módosítás</h1>
+            <p>Itt módosíthatod a focijáték beállításait.</p>
         </div>
     );
 }
