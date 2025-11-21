@@ -4,105 +4,104 @@ import './AdminStyles.css';
 
 const Adminfelulet = () => {
     return (
-        <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                <h1 style={{ color: 'var(--accent)', marginBottom: '10px', fontSize: '2rem' }}>Admin Felület</h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '16px' }}>Válassz az alábbi adminisztrációs lehetőségek közül:</p>
-            </div>
-
-            <div className="admin-grid">
-                <div className="admin-card">
-                    <div className="admin-card-header">
-                        <h3>🌍 Országok kezelése</h3>
+        <div className="admin-container">
+            <div className="admin-hero">
+                <div className="admin-hero-content">
+                    <div className="admin-icon">
+                        <span>👨‍💼</span>
                     </div>
-                    <div className="admin-card-body">
-                        <p>Országok hozzáadása, módosítása és keresése az adatbázisban.</p>
-                        <ul className="admin-features">
-                            <li>Új ország hozzáadása</li>
-                            <li>Országadatok módosítása</li>
-                            <li>Keresés név és ID alapján</li>
-                            <li>Adatok megjelenítése</li>
-                        </ul>
-                    </div>
-                    <div className="admin-card-footer">
-                        <Link to="/OrszagModosit" className="admin-button admin-button-primary">
-                            Országok kezelése
-                        </Link>
-                    </div>
+                    <h1 className="admin-title">Adminisztráció</h1>
+                    <p className="admin-subtitle">Teljes körű rendszerkezelés és adatszerkesztés</p>
                 </div>
-
-                <div className="admin-card">
-                    <div className="admin-card-header">
-                        <h3>⚽ Foci játékok</h3>
-                    </div>
-                    <div className="admin-card-body">
-                        <p>Foci játékok és meccsek adminisztrálása.</p>
-                        <ul className="admin-features">
-                            <li>Játékok hozzáadása</li>
-                            <li>Eredmények rögzítése</li>
-                            <li>Csapatok kezelése</li>
-                            <li>Statisztikák</li>
-                        </ul>
-                    </div>
-                    <div className="admin-card-footer">
-                        <Link to="/FociJatekModosit" className="admin-button admin-button-secondary">
-                            Foci játékok
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="admin-card">
-                    <div className="admin-card-header">
-                        <h3>📊 Statisztikák</h3>
-                    </div>
-                    <div className="admin-card-body">
-                        <p>Rendszer statisztikák és jelentések megtekintése.</p>
-                        <ul className="admin-features">
-                            <li>Felhasználói aktivitás</li>
-                            <li>Adatbázis statisztikák</li>
-                            <li>Rendszer állapot</li>
-                            <li>Jelentések generálása</li>
-                        </ul>
-                    </div>
-                    <div className="admin-card-footer">
-                        <Link to="/Statisztikak" className="admin-button admin-button-info">
-                            Statisztikák
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="admin-card">
-                    <div className="admin-card-header">
-                        <h3>⚙️ Beállítások</h3>
-                    </div>
-                    <div className="admin-card-body">
-                        <p>Rendszer beállítások és konfigurációk.</p>
-                        <ul className="admin-features">
-                            <li>Felhasználók kezelése</li>
-                            <li>Jogosultságok</li>
-                            <li>Rendszer konfiguráció</li>
-                            <li>Biztonsági beállítások</li>
-                        </ul>
-                    </div>
-                    <div className="admin-card-footer">
-                        <Link to="/Beallitasok" className="admin-button admin-button-warning">
-                            Beállítások
-                        </Link>
-                    </div>
+                <div className="admin-hero-bg">
+                    <div className="hero-shape hero-shape-1"></div>
+                    <div className="hero-shape hero-shape-2"></div>
+                    <div className="hero-shape hero-shape-3"></div>
                 </div>
             </div>
 
-            <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                <Link to="/" className="admin-button" style={{ 
-                    backgroundColor: '#1a73e8', 
-                    color: 'white', 
-                    padding: '10px 20px', 
-                    textDecoration: 'none', 
-                    borderRadius: '5px',
-                    display: 'inline-block'
-                }}>
-                    ← Vissza a főoldalra
-                </Link>
+            <div className="admin-main">
+                <div className="admin-grid-modern">
+                    <div className="admin-card-modern admin-card-active">
+                        <div className="card-icon">
+                            <span>🌍</span>
+                        </div>
+                        <div className="card-content">
+                            <h3>Országok kezelése</h3>
+                            <p>Teljes ország adatbázis adminisztráció és menedzsment</p>
+                            <div className="card-features">
+                                <span className="feature-badge">Hozzáadás</span>
+                                <span className="feature-badge">Módosítás</span>
+                                <span className="feature-badge">Keresés</span>
+                                <span className="feature-badge">Listázás</span>
+                            </div>
+                        </div>
+                        <div className="card-footer">
+                            <Link to="/OrszagModosit" className="admin-btn admin-btn-primary">
+                                <span>Megnyitás</span>
+                                <span className="btn-arrow">→</span>
+                            </Link>
+                        </div>
+                        <div className="card-glow"></div>
+                    </div>
+
+                    <div className="admin-card-modern admin-card-active">
+                        <div className="card-icon">
+                            <span>⚽</span>
+                        </div>
+                        <div className="card-content">
+                            <h3>Foci játékok</h3>
+                            <p>Sporteseményadatok és meccseredmények kezelése</p>
+                            <div className="card-features">
+                                <span className="feature-badge">Meccsek</span>
+                                <span className="feature-badge">Eredmények</span>
+                                <span className="feature-badge">Csapatok</span>
+                                <span className="feature-badge">Statisztika</span>
+                            </div>
+                        </div>
+                        <div className="card-footer">
+                            <Link to="/FociJatekModosit" className="admin-btn admin-btn-secondary">
+                                <span>Megnyitás</span>
+                                <span className="btn-arrow">→</span>
+                            </Link>
+                        </div>
+                        <div className="card-glow"></div>
+                    </div>
+
+                    <div className="admin-card-modern admin-card-inactive">
+                        <div className="card-icon inactive">
+                            <span>⚙️</span>
+                        </div>
+                        <div className="card-content">
+                            <h3>Beállítások</h3>
+                            <p>Rendszerbeállítások és konfigurációs opciók</p>
+                            <div className="card-features">
+                                <span className="feature-badge inactive">Felhasználók</span>
+                                <span className="feature-badge inactive">Jogosultságok</span>
+                                <span className="feature-badge inactive">Konfiguráció</span>
+                                <span className="feature-badge inactive">Biztonság</span>
+                            </div>
+                        </div>
+                        <div className="card-footer">
+                            <div className="admin-btn admin-btn-disabled">
+                                <span>Hamarosan</span>
+                                <span className="btn-lock">🔒</span>
+                            </div>
+                        </div>
+                        <div className="card-overlay">
+                            <div className="overlay-text">
+                                <span className="coming-soon">Fejlesztés alatt</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="admin-actions">
+                    <Link to="/" className="back-button">
+                        <span className="back-icon">←</span>
+                        <span>Vissza a főoldalra</span>
+                    </Link>
+                </div>
             </div>
         </div>
     );

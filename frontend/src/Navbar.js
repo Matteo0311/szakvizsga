@@ -58,39 +58,14 @@ const Navbar = () => {
                 🎯 Témaválasztás
               </Link>
             </li>
-            <li className="nav-item dropdown">
-              <span className="nav-link dropdown-toggle">
-                ⚙️ Admin
-              </span>
-              <ul className="dropdown-menu">
-                <li>
-                  <Link 
-                    className={`dropdown-link ${isActive('/adminfelulet') ? 'active' : ''}`} 
-                    to="/adminfelulet"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    👨‍💼 Adminfelület
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    className={`dropdown-link ${isActive('/orszagmodosit') ? 'active' : ''}`} 
-                    to="/orszagmodosit"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    🌍 Ország módosítás
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    className={`dropdown-link ${isActive('/focijatekmodosit') ? 'active' : ''}`} 
-                    to="/focijatekmodosit"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    ⚽ Focijáték módosítás
-                  </Link>
-                </li>
-              </ul>
+            <li className="nav-item">
+              <Link 
+                className={`nav-link ${isActive('/adminfelulet') ? 'active' : ''}`} 
+                to="/adminfelulet"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                👨‍💼 Adminfelület
+              </Link>
             </li>
           </ul>
           
