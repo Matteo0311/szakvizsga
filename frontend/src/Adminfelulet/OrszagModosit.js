@@ -7,8 +7,15 @@ const OrszagModosit=({kivalasztott})=>{
     const [tolt,setTolt]=useState(true)
     const [hiba,setHiba]=useState(false)
     const [modositasFelulet, setModositasFelulet] = useState(false)
+    const [ujOrszagFelulet, setUjOrszagFelulet] = useState(false)
     const [modositandoOrszag, setModositandoOrszag] = useState({
         orszag_id: '',
+        orszag_nev: '',
+        orszag_nepesseg: '',
+        orszag_nagysag: '',
+        orszag_gdp: ''
+    })
+    const [ujOrszag, setUjOrszag] = useState({
         orszag_nev: '',
         orszag_nepesseg: '',
         orszag_nagysag: '',
@@ -43,6 +50,72 @@ const OrszagModosit=({kivalasztott})=>{
     useEffect(()=>{
         leToltes()
     },[])
+
+    // --------------------- Új ország hozzáadásának folyamata ----------------- //
+
+    const UjOrszagFeluletMegnyitas = () => {
+        setUjOrszag({
+            orszag_nev: '',
+            orszag_nepesseg: '',
+            orszag_nagysag: '',
+            orszag_gdp: ''
+        });
+        setUjOrszagFelulet(true);
+    };
+
+    const UjOrszagFeluletBezaras = () => {
+        setUjOrszagFelulet(false);
+        setUjOrszag({
+            orszag_nev: '',
+            orszag_nepesseg: '',
+            orszag_nagysag: '',
+            orszag_gdp: ''
+        });
+    };
+
+    const UjOrszagInputValtozas = (e) => {
+        const { name, value } = e.target;
+        setUjOrszag(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const UjOrszagHozzaadas = async () => {
+        if (!ujOrszag.orszag_nev || !ujOrszag.orszag_nepesseg || 
+            !ujOrszag.orszag_nagysag || !ujOrszag.orszag_gdp) {
+            alert('Kérlek töltsd ki az összes mezőt!');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${Cim.Cim}/ujOrszagFelvitele`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    orszag_nev: ujOrszag.orszag_nev,
+                    orszag_nepesseg: ujOrszag.orszag_nepesseg,
+                    orszag_nagysag: ujOrszag.orszag_nagysag,
+                    orszag_gdp: ujOrszag.orszag_gdp,
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert('Új ország sikeresen hozzáadva!');
+                UjOrszagFeluletBezaras();
+                leToltes();
+            } else {
+                const error = await response.json();
+                alert(`Hiba történt: ${error.error}`);
+            }
+        } catch (error) {
+            console.error('Hiba történt az ország hozzáadása során:', error);
+            alert('Hiba történt az ország hozzáadása során!');
+        }
+    };
 
     // --------------------- Országok módosításának folyamata ----------------- //
 
@@ -193,9 +266,71 @@ const OrszagModosit=({kivalasztott})=>{
             </div>
           )}
 
+          {/* Új ország hozzáadása Modal */}
+          {ujOrszagFelulet && (
+            <div className="modal-hatter">
+              <div className="modal-tartalom">
+                <div className="modal-fejlec">
+                  <h3>Új ország hozzáadása</h3>
+                  <button className="bezaras-gomb" onClick={UjOrszagFeluletBezaras}>×</button>
+                </div>
+                <div className="modal-test">
+                  <div className="input-csoport">
+                    <label>Ország neve:</label>
+                    <input
+                      type="text"
+                      name="orszag_nev"
+                      value={ujOrszag.orszag_nev}
+                      onChange={UjOrszagInputValtozas}
+                      placeholder="Ország neve"
+                    />
+                  </div>
+                  <div className="input-csoport">
+                    <label>Népessége:</label>
+                    <input
+                      type="number"
+                      name="orszag_nepesseg"
+                      value={ujOrszag.orszag_nepesseg}
+                      onChange={UjOrszagInputValtozas}
+                      placeholder="Népessége"
+                    />
+                  </div>
+                  <div className="input-csoport">
+                    <label>Nagysága (km²):</label>
+                    <input
+                      type="number"
+                      name="orszag_nagysag"
+                      value={ujOrszag.orszag_nagysag}
+                      onChange={UjOrszagInputValtozas}
+                      placeholder="Nagysága km²-ben"
+                    />
+                  </div>
+                  <div className="input-csoport">
+                    <label>GDP (millió $):</label>
+                    <input
+                      type="number"
+                      name="orszag_gdp"
+                      value={ujOrszag.orszag_gdp}
+                      onChange={UjOrszagInputValtozas}
+                      placeholder="GDP millió dollárban"
+                    />
+                  </div>
+                </div>
+                <div className="modal-lablelc">
+                  <button className="admin-button" onClick={UjOrszagHozzaadas}>
+                    Ország hozzáadása
+                  </button>
+                  <button className="admin-button visszavon" onClick={UjOrszagFeluletBezaras}>
+                    Mégsem
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h2 style={{ margin: 0 }}>Városok</h2>
-            <button className="admin-button">Új ország hozzáadása</button>
+            <button className="admin-button" onClick={UjOrszagFeluletMegnyitas}>Új ország hozzáadása</button>
           </div>
             <table className="adat-tablazat">
                 <thead>
