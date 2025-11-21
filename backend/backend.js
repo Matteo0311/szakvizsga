@@ -32,17 +32,7 @@ app.get('/orszagAdatBetolt', (req, res) => {
         }
     });
 });
-// Főtéma adat betöltése
-app.get('/temaAdatBetolt', (req, res) => {
-    pool.query('SELECT * FROM fotema', (error, results) => {
-        if (error) {
-            console.error('Hiba az adatok betöltésekor:', error);
-            res.status(500).json({ error: 'Hiba az adatok betöltésekor' });
-        } else {
-            res.json(results);
-        }
-    });
-});
+
 // Országok összes adatának módosítása
 app.put('/orszagAdatModosit/:id', (req, res) => {
     const orszag_id_from_url = req.params.id;
@@ -195,6 +185,79 @@ app.post('/login', (req, res) => {
 });
 
 // FMáté végpontjai
+
+// Foci játékos adat betöltése
+app.get('/focijatekosAdatBetolt', (req, res) => {
+    pool.query('SELECT * FROM foci_jatekos', (error, results) => {
+        if (error) {
+            console.error('Hiba az adatok betöltésekor:', error);
+            res.status(500).json({ error: 'Hiba az adatok betöltésekor' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+// Foci játékos összes adatának módosítása
+app.put('/focijatekosAdatModosit/:id', (req, res) => {
+    const foci_jatekos_id_from_url = req.params.id;
+    const { foci_jatekos_nev,foci_jatekos_ertekeles,foci_jatekos_piaci_ertek,foci_jatekos_eletkor } = req.body;
+
+    pool.query(
+        'UPDATE foci_jatekos SET foci_jatekos_nev=?,foci_jatekos_ertekeles=?,foci_jatekos_piaci_ertek=?,foci_jatekos_eletkor=? WHERE foci_jatekos_id = ?',
+        [foci_jatekos_nev,foci_jatekos_ertekeles,foci_jatekos_piaci_ertek,foci_jatekos_eletkor, foci_jatekos_id_from_url],
+
+        (error, results) => {
+            if (error) {
+                console.error('Hiba az adatok módosításakor:', error);
+                res.status(500).json({ error: 'Hiba az adatok módosításakor' });
+            } else {
+                res.json({ message: 'Foci jatekos adatai módosítva', results });
+            }
+        }
+    );
+});
+// Új foci játékos hozzáadása (Jatekos neve, értékelése, piaci értéke, életkora)
+app.post('/ujFocijatekosFelvitele', (req, res) => {
+    const { foci_jatekos_nev,foci_jatekos_ertekeles,foci_jatekos_piaci_ertek,foci_jatekos_eletkor } = req.body;
+
+    pool.query(
+        'INSERT INTO foci_jatekos (foci_jatekos_nev,foci_jatekos_ertekeles,foci_jatekos_piaci_ertek,foci_jatekos_eletkor) VALUES (?, ?, ?, ?)',
+        [foci_jatekos_nev,foci_jatekos_ertekeles,foci_jatekos_piaci_ertek,foci_jatekos_eletkor],
+        (error, results) => {
+            if (error) {
+                console.error('Hiba az új ország hozzáadásakor:', error);
+                res.status(500).json({ error: 'Hiba az új foci játékos hozzáadásakor' });
+            } else {
+                res.json({ message: 'Új foci játékos hozzáadva', results });
+            }
+        }
+    );
+});
+
+// Foci játékos keresése név (részleges egyezés) VAGY ID alapján
+
+app.get('/focijatekosKereses/:searchTerm', (req, res) => {
+    const searchTerm = req.params.searchTerm; 
+    
+    const sqlQuery = `
+        SELECT * FROM foci_jatekos 
+        WHERE foci_jatekos_nev LIKE CONCAT('%', ?, '%') 
+        OR foci_jatekos_id = ?
+    `;
+
+    pool.query(sqlQuery, [searchTerm, searchTerm], (error, results) => {
+        if (error) {
+            console.error('Hiba a foci játékos keresésekor:', error);
+            res.status(500).json({ error: 'Hiba a foci játékos keresésekor' });
+        } else {
+
+             if (results.length === 0) {
+                 return res.status(404).json({ message: 'Nincs találat a keresési feltételre.' });
+             }
+            res.json(results);
+        }
+    });
+});
 
 
 app.listen(port, () => {
