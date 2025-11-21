@@ -47,17 +47,17 @@ const Adminfelulet = () => {
                             <span>⚽</span>
                         </div>
                         <div className="card-content">
-                            <h3>Foci játékok</h3>
-                            <p>Sporteseményadatok és meccseredmények kezelése</p>
+                            <h3>Focikezelő</h3>
+                            <p>Foci játékosok adatainak kezelése</p>
                             <div className="card-features">
-                                <span className="feature-badge">Meccsek</span>
-                                <span className="feature-badge">Eredmények</span>
-                                <span className="feature-badge">Csapatok</span>
-                                <span className="feature-badge">Statisztika</span>
+                                <span className="feature-badge">Hozzáadás</span>
+                                <span className="feature-badge">Módosítás</span>
+                                <span className="feature-badge">Keresés</span>
+                                <span className="feature-badge">Listázás</span>
                             </div>
                         </div>
                         <div className="card-footer">
-                            <Link to="/FociJatekModosit" className="admin-btn admin-btn-secondary">
+                            <Link to="/FociJatekModosit" className="admin-btn admin-btn-primary">
                                 <span>Megnyitás</span>
                                 <span className="btn-arrow">→</span>
                             </Link>
