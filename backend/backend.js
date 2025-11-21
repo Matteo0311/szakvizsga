@@ -29,7 +29,7 @@ app.get('/orszagAdatBetolt', (req, res) => {
         }
     });
 });
-
+// Főtéma adat betöltése
 app.get('/temaAdatBetolt', (req, res) => {
     pool.query('SELECT * FROM fotema', (error, results) => {
         if (error) {
