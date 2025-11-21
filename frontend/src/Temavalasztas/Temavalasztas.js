@@ -3,3 +3,4 @@ const Temavalasztas=()=>{
         <div>Válasz témát</div>
     )
 }
+export default Temavalasztas
