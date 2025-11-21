@@ -1,12 +1,15 @@
 // Modern Navbar komponens
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import './NavbarStyles.css';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -26,6 +29,12 @@ const Navbar = () => {
 
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsMenuOpen(false);
+    navigate('/');
   };
 
   const isActive = (path) => location.pathname === path;
@@ -69,9 +78,19 @@ const Navbar = () => {
             </li>
           </ul>
           
-          <button className="theme-toggle" onClick={toggleTheme} title={isDarkTheme ? 'Világos témára váltás' : 'Sötét témára váltás'}>
-            {isDarkTheme ? '☀️' : '🌙'}
-          </button>
+          <div className="navbar-actions">
+            {isAuthenticated && (
+              <div className="user-info">
+                <span className="user-welcome">👋 {user?.nev}</span>
+                <button className="logout-btn" onClick={handleLogout} title="Kijelentkezés">
+                  🚪 Kilépés
+                </button>
+              </div>
+            )}
+            <button className="theme-toggle" onClick={toggleTheme} title={isDarkTheme ? 'Világos témára váltás' : 'Sötét témára váltás'}>
+              {isDarkTheme ? '☀️' : '🌙'}
+            </button>
+          </div>
         </div>
         
         <button className="mobile-menu-toggle" onClick={toggleMenu}>

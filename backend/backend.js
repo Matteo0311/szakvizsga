@@ -184,6 +184,23 @@ app.post('/login', (req, res) => {
     );
 });
 
+// Felhasználó regisztrálása (felhasználónév, felhasználó jelszó)
+app.post('/register', (req, res) => {
+    const { felh_nev, jelszo } = req.body;
+    pool.query(
+        'INSERT INTO account (felh_nev, felh_jelszo, felh_szerepkor) VALUES (?, SHA2(?, 256), ?)',
+        [felh_nev, jelszo, 'user'], // Alapértelmezett szerepkör: 'user'
+        (error, results) => {
+            if (error) {
+                console.error('Hiba a felhasználó regisztrálásakor:', error);
+                res.status(500).json({ error: 'Hiba a felhasználó regisztrálásakor' });
+            } else {
+                res.json({ message: 'Felhasználó sikeresen regisztrálva', results });
+            }
+        }
+    );
+});
+
 // FMáté végpontjai
 
 // Foci játékos adat betöltése
