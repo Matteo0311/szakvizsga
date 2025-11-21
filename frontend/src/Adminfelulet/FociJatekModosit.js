@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Admin from "./Admin.css"
 import { useState,useEffect } from "react"
 import Cim from "../Cim"
@@ -372,5 +373,17 @@ const FociJatekModosit=({kivalasztott})=>{
                     </div>
                 </div>
         )
+=======
+import React from 'react';
+import './AdminStyles.css';
+
+const FociJatekModosit = () => {
+    return (
+        <div className="container">
+            <h1>⚽ Foci Játék Módosítás</h1>
+            <p>Itt módosíthatod a focijáték beállításait.</p>
+        </div>
+    );
+>>>>>>> 4fa1eb1fade2c5a163dbb3acfaf2f6d8f0648b3d
 }
 export default FociJatekModosit;

@@ -1,4 +1,4 @@
-import Admin from "./Admin.css"
+import "./AdminStyles.css"
 import { useState,useEffect } from "react"
 import Cim from "../Cim"
 
