@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import Adminfelulet from './Adminfelulet/Adminfelulet';
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
