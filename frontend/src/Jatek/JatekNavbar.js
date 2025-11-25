@@ -53,15 +53,6 @@ const JatekNavbar = () => {
             </li>
             <li className="jatek-nav-item">
               <Link 
-                className={`jatek-nav-link ${isActive('/temavalasztas') ? 'active' : ''}`} 
-                to="/temavalasztas"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                🎯 Játék
-              </Link>
-            </li>
-            <li className="jatek-nav-item">
-              <Link 
                 className={`jatek-nav-link ${(isActive('/adminfelulet') || isActive('/login')) ? 'active' : ''}`} 
                 to={isAuthenticated ? "/adminfelulet" : "/login"}
                 onClick={() => setIsMenuOpen(false)}

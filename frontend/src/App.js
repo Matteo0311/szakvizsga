@@ -30,7 +30,7 @@ function App() {
           <ConditionalNavbar />
           <div className="main-content">
             <Routes>
-              <Route path="/" element={<div className="home-content"><h1>Üdvözöl a HigherLower alkalmazásban!</h1><p>Válaszd ki az egyik menüpontot a fent lévő navigációs sávból!</p></div>} />
+              <Route path="/" element={<Temavalasztas />} />
               <Route path="/temavalasztas" element={<Temavalasztas />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
