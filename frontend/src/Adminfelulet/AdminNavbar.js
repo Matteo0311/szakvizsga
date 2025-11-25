@@ -87,26 +87,15 @@ const AdminNavbar = () => {
                 </Link>
               </li>
             ) : (
-              <>
-                <li className="admin-nav-item">
-                  <Link 
-                    className={`admin-nav-link ${isActive('/') ? 'active' : ''}`} 
-                    to="/"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    🎮 Vissza a játékhoz
-                  </Link>
-                </li>
-                <li className="admin-nav-item">
-                  <Link 
-                    className={`admin-nav-link ${isActive('/adminfelulet') ? 'active' : ''}`} 
-                    to="/adminfelulet"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    🏠 Admin főoldal
-                  </Link>
-                </li>
-              </>
+              <li className="admin-nav-item">
+                <Link 
+                  className={`admin-nav-link ${isActive('/') ? 'active' : ''}`} 
+                  to="/"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  🎮 Vissza a játékhoz
+                </Link>
+              </li>
             )}
           </ul>
           
