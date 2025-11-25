@@ -50,6 +50,7 @@ const Temavalasztas = () => {
             <h1 className="page-title">🎯 Témaválasztás</h1>
             <br />
             <p className="page-description">Válaszd ki a játék témáját az alábbi lehetőségek közül!</p>
+<<<<<<< HEAD
             {!selectedTheme ? (
                 <div className="theme-list">
                     {themes.map((theme) => (
@@ -73,6 +74,28 @@ const Temavalasztas = () => {
                     ))}
                 </div>
             )}
+=======
+            
+            <div className="theme-buttons">
+                <button className="theme-btn">
+                    <span className="theme-icon">⚽</span>
+                    <span className="theme-title">Foci</span>
+                    <span className="theme-desc">Játékos</span>
+                </button>
+                
+                <button className="theme-btn">
+                    <span className="theme-icon">🌍</span>
+                    <span className="theme-title">Országok</span>
+                    <span className="theme-desc">Népesség, területek, GDP</span>
+                </button>
+                
+                <button className="theme-btn">
+                    <span className="theme-icon">🎵</span>
+                    <span className="theme-title">Zene az jó</span>
+                    <span className="theme-desc">HAMAROSAN</span>
+                </button>
+            </div>
+>>>>>>> 8441f78f53436e68e2a31f7ffc08dfc23e2fcfd4
         </div>
     );
 };

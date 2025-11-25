@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import config from '../config';
+import config from '../../config';
 import './RegisterStyles.css';
 
 const Register = () => {
@@ -12,8 +12,52 @@ const Register = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
   
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Regisztráció állapot ellenőrzése
+    const savedRegistration = localStorage.getItem('registrationEnabled');
+    if (savedRegistration !== null) {
+      setRegistrationEnabled(JSON.parse(savedRegistration));
+    }
+  }, []);
+
+  // Ha a regisztráció le van tiltva, visszairányítás
+  if (!registrationEnabled) {
+    return (
+      <div className="register-container">
+        <div className="register-background">
+          <div className="register-shape register-shape-1"></div>
+          <div className="register-shape register-shape-2"></div>
+        </div>
+        
+        <div className="register-card">
+          <div className="register-header">
+            <div className="register-icon">
+              <span>🚫</span>
+            </div>
+            <h1>Regisztráció letiltva</h1>
+            <p>A regisztráció jelenleg nem elérhető</p>
+          </div>
+          
+          <div className="register-footer">
+            <p>
+              Vissza a bejelentkezéshez: 
+              <button 
+                type="button" 
+                className="link-btn" 
+                onClick={() => navigate('/login')}
+              >
+                Bejelentkezés
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({

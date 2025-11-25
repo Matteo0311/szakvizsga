@@ -34,7 +34,7 @@ const Adminfelulet = () => {
                             </div>
                         </div>
                         <div className="card-footer">
-                            <Link to="/OrszagModosit" className="admin-btn admin-btn-primary">
+                            <Link to="/orszagmodosit" className="admin-btn admin-btn-primary">
                                 <span>Megnyitás</span>
                                 <span className="btn-arrow">→</span>
                             </Link>
@@ -57,7 +57,7 @@ const Adminfelulet = () => {
                             </div>
                         </div>
                         <div className="card-footer">
-                            <Link to="/FociJatekModosit" className="admin-btn admin-btn-primary">
+                            <Link to="/focijatekmodosit" className="admin-btn admin-btn-primary">
                                 <span>Megnyitás</span>
                                 <span className="btn-arrow">→</span>
                             </Link>
@@ -65,31 +65,27 @@ const Adminfelulet = () => {
                         <div className="card-glow"></div>
                     </div>
 
-                    <div className="admin-card-modern admin-card-inactive">
-                        <div className="card-icon inactive">
+                    <div className="admin-card-modern admin-card-active">
+                        <div className="card-icon">
                             <span>⚙️</span>
                         </div>
                         <div className="card-content">
                             <h3>Beállítások</h3>
                             <p>Rendszerbeállítások és konfigurációs opciók</p>
                             <div className="card-features">
-                                <span className="feature-badge inactive">Felhasználók</span>
-                                <span className="feature-badge inactive">Jogosultságok</span>
-                                <span className="feature-badge inactive">Konfiguráció</span>
-                                <span className="feature-badge inactive">Biztonság</span>
+                                <span className="feature-badge">Regisztráció</span>
+                                <span className="feature-badge">Jogosultságok</span>
+                                <span className="feature-badge">Konfiguráció</span>
+                                <span className="feature-badge">Biztonság</span>
                             </div>
                         </div>
                         <div className="card-footer">
-                            <div className="admin-btn admin-btn-disabled">
-                                <span>Hamarosan</span>
-                                <span className="btn-lock">🔒</span>
-                            </div>
+                            <Link to="/beallitasok" className="admin-btn admin-btn-primary">
+                                <span>Megnyitás</span>
+                                <span className="btn-arrow">→</span>
+                            </Link>
                         </div>
-                        <div className="card-overlay">
-                            <div className="overlay-text">
-                                <span className="coming-soon">Fejlesztés alatt</span>
-                            </div>
-                        </div>
+                        <div className="card-glow"></div>
                     </div>
                 </div>
 
