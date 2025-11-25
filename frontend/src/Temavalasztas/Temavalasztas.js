@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import './TemavalasztasStyles.css';
+import { IoFootball } from 'react-icons/io5';
+import { FaGlobeEurope, FaMusic } from 'react-icons/fa';
 
 const themes = [
     {
         title: 'Foci',
-        icon: '⚽',
+        icon: IoFootball,
         desc: 'Foci játékos értékelés, életkor, piaci érték',
         subthemes: [
             { title: 'FC 26 játékos értékelés', desc: 'Melyik játékosnak nagyobb az FC 26 értékelése!' },
@@ -14,7 +16,7 @@ const themes = [
     },
     {
         title: 'Országok',
-        icon: '🌍',
+        icon: FaGlobeEurope,
         desc: 'Népesség, terület, GDP',
         subthemes: [
             { title: 'Európa', desc: 'Európai országok' },
@@ -23,7 +25,7 @@ const themes = [
     },
     {
         title: 'Zene',
-        icon: '🎵',
+        icon: FaMusic,
         desc: 'Előadók, számok',
         subthemes: [
             { title: 'Magyar', desc: 'Magyar előadók' },
@@ -57,7 +59,7 @@ const Temavalasztas = () => {
                             <div className="flip-card-inner">
                                 <div className="flip-card-front">
                                     <button className="theme-btn compact" tabIndex={-1}>
-                                        <span className="theme-icon">{theme.icon}</span>
+                                        <theme.icon className="theme-icon" />
                                         <span className="theme-title">{theme.title}</span>
                                     </button>
                                 </div>
