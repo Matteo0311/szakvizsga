@@ -219,6 +219,14 @@ const FociJatekModosit=({kivalasztott})=>{
                 }
         };
 
+        // Piaci érték formázása millióban (pl. 65m)
+        const formatMillio = (ertek) => {
+                if (ertek === null || ertek === undefined || ertek === "") return "-";
+                const szam = Number(ertek);
+                if (isNaN(szam)) return ertek;
+                return szam >= 1000000 ? `${Math.round(szam / 1000000)}m` : szam;
+        };
+
         if (tolt)
                 return (
                         <div style={{textAlign:"center"}}>Adatok betöltése folyamatban...</div>
@@ -333,7 +341,7 @@ const FociJatekModosit=({kivalasztott})=>{
                                                                 <td>{keresesSzoveg.trim() ? elem.foci_jatekos_id : index + 1}</td>
                                                                 <td className="orszag-nev">{elem.foci_jatekos_nev}</td>
                                                                 <td className="szam-adat">{elem.foci_jatekos_ertekeles ?? '-'}</td>
-                                                                <td className="szam-adat">{elem.foci_jatekos_piaci_ertek ?? '-'}</td>
+                                                                <td className="szam-adat">{formatMillio(elem.foci_jatekos_piaci_ertek)}</td>
                                                                 <td className="szam-adat">{elem.foci_jatekos_eletkor ?? '-'}</td>
                                                                 <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
                                                         </tr>
