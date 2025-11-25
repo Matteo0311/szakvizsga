@@ -200,6 +200,8 @@ app.post('/register', (req, res) => {
         }
     );
 });
+// Két játékos kiválasztása állandó
+
 
 // FMáté végpontjai
 
