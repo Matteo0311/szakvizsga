@@ -28,6 +28,8 @@ const Beallitasok = () => {
     const usersPerPage = 20;
     const [searchTerm, setSearchTerm] = useState('');
     const [searchLoading, setSearchLoading] = useState(false);
+    const [filterBy, setFilterBy] = useState('regisztracio_ido');
+    const [order, setOrder] = useState('desc');
 
     useEffect(() => {
         // Regisztráció állapot betöltése
@@ -45,7 +47,15 @@ const Beallitasok = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showUserManagement]);
 
-    const fetchUsers = async () => {
+    // Automatikus frissítés amikor a szűrési paraméterek változnak
+    useEffect(() => {
+        if (showUserManagement && users.length > 0 && !loading && !searchTerm) {
+            fetchUsers();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filterBy, order]);
+
+    const fetchUsers = async (useFilter = true) => {
         setLoading(true);
         setError(null);
         try {
@@ -55,7 +65,12 @@ const Beallitasok = () => {
                 throw new Error('Nincs token. Kérlek jelentkezz be újra!');
             }
             
-            const response = await fetch(`${config.API_BASE_URL}/felhasznalokLekerdezese`, {
+            // Endpoint választása: szűréssel vagy alapértelmezett
+            const endpoint = useFilter 
+                ? `${config.API_BASE_URL}/felhasznaloSzuro/${filterBy}/${order}`
+                : `${config.API_BASE_URL}/felhasznalokLekerdezese`;
+            
+            const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -86,6 +101,12 @@ const Beallitasok = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleResetFilters = () => {
+        setFilterBy('regisztracio_ido');
+        setOrder('desc');
+        fetchUsers(false); // Alapértelmezett lekérdezés szűrés nélkül
     };
 
     const handleDeleteUser = async (userId, username) => {
@@ -389,9 +410,9 @@ const Beallitasok = () => {
 
                 {/* Felhasználókezelő panel - ÚJ DIZÁJN */}
                 {showUserManagement && (
-                    <div className="user-management-modal-new">
-                        <div className="modal-backdrop" onClick={() => setShowUserManagement(false)}></div>
-                        <div className="user-management-content-new">
+                    <div className="user-management-modal-new" onClick={() => setShowUserManagement(false)}>
+                        <div className="modal-backdrop"></div>
+                        <div className="user-management-content-new" onClick={(e) => e.stopPropagation()}>
                             <div className="user-management-header-new">
                                 <div className="header-title-section">
                                     <div className="title-icon">
@@ -415,22 +436,23 @@ const Beallitasok = () => {
 
                             {/* Keresési és szűrési rész */}
                             <div className="user-management-search-section">
-                                <div className="search-controls-wrapper">
-                                    <div className="search-input-group-modal">
-                                        <FaSearch className="search-icon" />
+                                {/* Keresősáv */}
+                                <div className="search-bar-container">
+                                    <div className="search-input-group-enhanced">
+                                        <FaSearch className="search-icon-enhanced" />
                                         <input
                                             type="text"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                             onKeyPress={(e) => e.key === 'Enter' && searchTerm.trim() && handleSearch()}
-                                            placeholder="Keresés felhasználónév vagy ID alapján..."
-                                            className="search-input-modal"
+                                            placeholder="🔍 Keresés felhasználónév vagy ID alapján..."
+                                            className="search-input-enhanced"
                                         />
                                         {searchTerm && (
                                             <>
                                                 <button 
                                                     onClick={handleSearch}
-                                                    className="inline-search-btn"
+                                                    className="inline-search-btn-enhanced"
                                                     disabled={searchLoading || !searchTerm.trim()}
                                                     title="Keresés"
                                                 >
@@ -445,23 +467,70 @@ const Beallitasok = () => {
                                                         handleClearSearch();
                                                         fetchUsers();
                                                     }}
-                                                    className="clear-search-btn"
-                                                    title="Törlés és összes megjelenítése"
+                                                    className="clear-search-btn-enhanced"
+                                                    title="Törlés"
                                                 >
                                                     <FaTimes />
                                                 </button>
                                             </>
                                         )}
                                     </div>
-                                    <button 
-                                        onClick={fetchUsers} 
-                                        className="fetch-all-btn"
-                                        disabled={loading}
-                                        title="Összes felhasználó megjelenítése"
-                                    >
-                                        <FaUsers />
-                                        <span>{loading ? 'Betöltés...' : 'Összes'}</span>
-                                    </button>
+                                </div>
+
+                                {/* Szűrési opciók */}
+                                <div className="filter-section-container">
+                                    <div className="filter-controls-enhanced">
+                                        <div className="filter-group-enhanced">
+                                            <label htmlFor="filterBy" className="filter-label-enhanced">
+                                                📊 Rendezés alapja
+                                            </label>
+                                            <select 
+                                                id="filterBy"
+                                                value={filterBy}
+                                                onChange={(e) => setFilterBy(e.target.value)}
+                                                className="filter-select-enhanced"
+                                            >
+                                                <option value="regisztracio_ido">📅 Regisztráció időpontja</option>
+                                                <option value="szerepkor">👤 Szerepkör</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="filter-group-enhanced">
+                                            <label htmlFor="order" className="filter-label-enhanced">
+                                                🔄 Sorrend
+                                            </label>
+                                            <select 
+                                                id="order"
+                                                value={order}
+                                                onChange={(e) => setOrder(e.target.value)}
+                                                className="filter-select-enhanced"
+                                            >
+                                                <option value="asc">⬆️ Növekvő</option>
+                                                <option value="desc">⬇️ Csökkenő</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="filter-actions-enhanced">
+                                        <button 
+                                            onClick={() => fetchUsers(true)} 
+                                            className="apply-filter-btn"
+                                            disabled={loading}
+                                            title="Szűrés alkalmazása"
+                                        >
+                                            <FaCheck />
+                                            <span>{loading ? 'Betöltés...' : 'Szűrés alkalmazása'}</span>
+                                        </button>
+                                        <button 
+                                            onClick={handleResetFilters}
+                                            className="reset-filter-btn"
+                                            disabled={loading}
+                                            title="Alapértelmezett nézet visszaállítása"
+                                        >
+                                            <FaTimes />
+                                            <span>Alapértelmezett</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
