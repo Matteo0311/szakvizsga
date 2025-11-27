@@ -146,7 +146,7 @@ app.post('/login', (req, res) => {
     const sqlQuery = `
         SELECT felh_id, felh_nev, felh_szerepkor 
         FROM account 
-        WHERE felh_nev = ? AND felh_jelszo = SHA2(?, 256)
+        WHERE felh_nev = ? AND felh_jelszo = SHA2(?, 256) and felh_szerepkor = 'admin'
     `;
 
     pool.query(
