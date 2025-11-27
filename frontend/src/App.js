@@ -7,8 +7,10 @@ import Beallitasok from './Adminfelulet/Beallitasok';
 import Temavalasztas from './Temavalasztas/Temavalasztas';
 import Login from './Adminfelulet/Login/Login';
 import Register from './Adminfelulet/Register/Register';
+import BackendTest from './BackendTest';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
 import './App.css';
 import AdminNavbar from './Adminfelulet/AdminNavbar';
 import JatekNavbar from './Jatek/JatekNavbar';
@@ -16,7 +18,7 @@ import JatekNavbar from './Jatek/JatekNavbar';
 // Navbar komponens, amely feltételesen jelenik meg
 const ConditionalNavbar = () => {
   const location = useLocation();
-  const adminPaths = ['/adminfelulet', '/orszagmodosit', '/focijatekmodosit', '/beallitasok', '/login', '/register'];
+  const adminPaths = ['/adminfelulet', '/orszagmodosit', '/focijatekmodosit', '/beallitasok', '/login', '/register', '/backend-test'];
   const isAdminPath = adminPaths.includes(location.pathname);
   
   return isAdminPath ? <AdminNavbar /> : <JatekNavbar />;
@@ -45,9 +47,9 @@ function App() {
               <Route 
                 path="/beallitasok" 
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <Beallitasok />
-                  </ProtectedRoute>
+                  </AdminRoute>
                 } 
               />
               <Route 
@@ -63,6 +65,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <FociJatekModosit />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/backend-test" 
+                element={
+                  <ProtectedRoute>
+                    <BackendTest />
                   </ProtectedRoute>
                 } 
               />

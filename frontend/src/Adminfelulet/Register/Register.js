@@ -6,8 +6,9 @@ import './RegisterStyles.css';
 const Register = () => {
   const [formData, setFormData] = useState({
     felh_nev: '',
-    jelszo: '',
-    jelszo_confirm: ''
+    email: '',
+    jelszo1: '',
+    jelszo2: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -71,14 +72,22 @@ const Register = () => {
     setLoading(true);
     setError('');
 
+    // E-mail cím validáció
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Érvénytelen e-mail cím!');
+      setLoading(false);
+      return;
+    }
+
     // Jelszó ellenőrzés
-    if (formData.jelszo !== formData.jelszo_confirm) {
+    if (formData.jelszo1 !== formData.jelszo2) {
       setError('A jelszavak nem egyeznek!');
       setLoading(false);
       return;
     }
 
-    if (formData.jelszo.length < 4) {
+    if (formData.jelszo1.length < 4) {
       setError('A jelszónak legalább 4 karakter hosszúnak kell lennie!');
       setLoading(false);
       return;
@@ -94,7 +103,9 @@ const Register = () => {
         },
         body: JSON.stringify({
           felh_nev: formData.felh_nev,
-          jelszo: formData.jelszo
+          email: formData.email,
+          jelszo1: formData.jelszo1,
+          jelszo2: formData.jelszo2
         }),
       });
 
@@ -178,12 +189,26 @@ const Register = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="jelszo">Jelszó</label>
+            <label htmlFor="email">E-mail cím</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              disabled={loading}
+              placeholder="pelda@email.com"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="jelszo1">Jelszó</label>
             <input
               type="password"
-              id="jelszo"
-              name="jelszo"
-              value={formData.jelszo}
+              id="jelszo1"
+              name="jelszo1"
+              value={formData.jelszo1}
               onChange={handleChange}
               required
               disabled={loading}
@@ -193,12 +218,12 @@ const Register = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="jelszo_confirm">Jelszó megerősítése</label>
+            <label htmlFor="jelszo2">Jelszó megerősítése</label>
             <input
               type="password"
-              id="jelszo_confirm"
-              name="jelszo_confirm"
-              value={formData.jelszo_confirm}
+              id="jelszo2"
+              name="jelszo2"
+              value={formData.jelszo2}
               onChange={handleChange}
               required
               disabled={loading}

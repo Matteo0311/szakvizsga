@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import './AdminStyles.css';
 
 const Adminfelulet = () => {
+    const { user } = useAuth();
+    const isAdmin = user?.szerepkor === 'admin';
+
     return (
         <div className="admin-container">
             <div className="admin-hero">
@@ -65,29 +69,50 @@ const Adminfelulet = () => {
                         <div className="card-glow"></div>
                     </div>
 
-                    <div className="admin-card-modern admin-card-active">
-                        <div className="card-icon">
-                            <span>⚙️</span>
-                        </div>
-                        <div className="card-content">
-                            <h3>Beállítások</h3>
-                            <p>Rendszerbeállítások és konfigurációs opciók</p>
-                            <div className="card-features">
-                                <span className="feature-badge">Regisztráció</span>
-                                <span className="feature-badge">Jogosultságok</span>
-                                <span className="feature-badge">Konfiguráció</span>
-                                <span className="feature-badge">Biztonság</span>
+                    {isAdmin && (
+                        <div className="admin-card-modern admin-card-active">
+                            <div className="card-icon">
+                                <span>⚙️</span>
                             </div>
+                            <div className="card-content">
+                                <h3>Beállítások</h3>
+                                <p>Rendszerbeállítások és konfigurációs opciók</p>
+                                <div className="card-features">
+                                    <span className="feature-badge">Regisztráció</span>
+                                    <span className="feature-badge">Jogosultságok</span>
+                                    <span className="feature-badge">Konfiguráció</span>
+                                    <span className="feature-badge">Biztonság</span>
+                                </div>
+                            </div>
+                            <div className="card-footer">
+                                <Link to="/beallitasok" className="admin-btn admin-btn-primary">
+                                    <span>Megnyitás</span>
+                                    <span className="btn-arrow">→</span>
+                                </Link>
+                            </div>
+                            <div className="card-glow"></div>
                         </div>
-                        <div className="card-footer">
-                            <Link to="/beallitasok" className="admin-btn admin-btn-primary">
-                                <span>Megnyitás</span>
-                                <span className="btn-arrow">→</span>
-                            </Link>
-                        </div>
-                        <div className="card-glow"></div>
-                    </div>
+                    )}
                 </div>
+
+                {!isAdmin && (
+                    <div style={{
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffc107',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        marginTop: '30px',
+                        textAlign: 'center',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                    }}>
+                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>ℹ️</div>
+                        <h3 style={{ margin: '0 0 10px 0', color: '#856404' }}>Korlátozott hozzáférés</h3>
+                        <p style={{ margin: '0', color: '#856404' }}>
+                            Jelenleg <strong>{user?.szerepkor || 'felhasználó'}</strong> szerepkörrel vagy bejelentkezve. 
+                            A Beállítások menü csak adminisztrátorok számára érhető el.
+                        </p>
+                    </div>
+                )}
 
                 <div className="admin-actions">
                     <Link to="/" className="back-button">
