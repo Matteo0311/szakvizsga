@@ -11,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 
 const pool = mysql.createPool({
-    host: 'localhost',
+    host: 'localhost:3306',
     user: 'root',
     password: '',
     database: 'higherorlower'
