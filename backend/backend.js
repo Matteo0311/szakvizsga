@@ -29,7 +29,6 @@ app.get('/orszagAdatBetolt', (req, res) => {
             res.status(500).json({ error: 'Hiba az adatok betöltésekor' });
         } else {
             res.json(results);
-            res.json(results);
         }
     });
 });
@@ -235,24 +234,39 @@ app.get('/felhasznalokLekerdezese', authenticateToken, (req, res) => {
     });
 });
 
-// kiválasztott profil módosítása minden adattal együtt (felhasználónév, jelszó, e-mail-cím, szerepkör) - csak adminoknak
+// kiválasztott profil módosítása - csak adminoknak
 app.put('/felhasznaloModosit/:id', authenticateToken, (req, res) => {
     if (req.user.szerepkor !== 'admin') {
         return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
     }
     const felh_id_from_url = req.params.id;
     const { felh_nev, jelszo, email, felh_szerepkor } = req.body;
-    pool.query(
-        'UPDATE account SET felh_nev = ?, felh_jelszo = SHA2(?, 256), email = ?, felh_szerepkor = ? WHERE felh_id = ?',
-        [felh_nev, jelszo, email, felh_szerepkor, felh_id_from_url],
-        (error, results) => {
-            if (error) {
-                console.error('Hiba a felhasználó módosításakor:', error);
-                return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
+    
+    if (jelszo && jelszo.trim() !== '') {
+        pool.query(
+            'UPDATE account SET felh_nev = ?, felh_jelszo = SHA2(?, 256), email = ?, felh_szerepkor = ? WHERE felh_id = ?',
+            [felh_nev, jelszo, email, felh_szerepkor, felh_id_from_url],
+            (error, results) => {
+                if (error) {
+                    console.error('Hiba a felhasználó módosításakor:', error);
+                    return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
+                }
+                res.json({ message: 'Felhasználó adatai módosítva (jelszóval együtt)', results });
             }
-            res.json({ message: 'Felhasználó adatai módosítva', results });
-        }
-    );
+        );
+    } else {
+        pool.query(
+            'UPDATE account SET felh_nev = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
+            [felh_nev, email, felh_szerepkor, felh_id_from_url],
+            (error, results) => {
+                if (error) {
+                    console.error('Hiba a felhasználó módosításakor:', error);
+                    return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
+                }
+                res.json({ message: 'Felhasználó adatai módosítva (jelszó nélkül)', results });
+            }
+        );
+    }
 });
 
 // regisztrált profil törlése ID alapján - csak adminoknak

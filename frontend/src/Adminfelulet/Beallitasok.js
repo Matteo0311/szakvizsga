@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import './BeallitasokStyles.css';
 import config from '../config';
-import { FaUsers, FaUser, FaCrown, FaEnvelope, FaIdCard, FaCalendarAlt, FaEdit, FaTrash, FaCheck, FaTimes, FaInbox } from 'react-icons/fa';
+import { FaUsers, FaUser, FaCrown, FaEnvelope, FaIdCard, FaCalendarAlt, FaEdit, FaTrash, FaCheck, FaTimes, FaInbox, FaSearch } from 'react-icons/fa';
 
 const Beallitasok = () => {
     const { user } = useAuth();
@@ -22,9 +22,12 @@ const Beallitasok = () => {
     const [error, setError] = useState(null);
     const [showUserManagement, setShowUserManagement] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [editForm, setEditForm] = useState({ felhasznalonev: '', email: '', szerepkor: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 20;
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchLoading, setSearchLoading] = useState(false);
 
     useEffect(() => {
         // Regisztráció állapot betöltése
@@ -33,6 +36,14 @@ const Beallitasok = () => {
             setRegistrationEnabled(JSON.parse(savedRegistration));
         }
     }, []);
+
+    // Automatikus betöltés amikor a modal megnyílik és nincsenek felhasználók
+    useEffect(() => {
+        if (showUserManagement && users.length === 0 && !loading && !error) {
+            fetchUsers();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showUserManagement]);
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -43,9 +54,6 @@ const Beallitasok = () => {
             if (!token) {
                 throw new Error('Nincs token. Kérlek jelentkezz be újra!');
             }
-
-            console.log('Token:', token);
-            console.log('API URL:', `${config.API_BASE_URL}/felhasznalokLekerdezese`);
             
             const response = await fetch(`${config.API_BASE_URL}/felhasznalokLekerdezese`, {
                 method: 'GET',
@@ -55,56 +63,23 @@ const Beallitasok = () => {
                 }
             });
 
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
-
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                console.error('Error response:', errorData);
                 throw new Error(errorData.message || errorData.error || `Hiba: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log('🔍 ===== BACKEND VÁLASZ DEBUG =====');
-            console.log('📦 Raw data típusa:', typeof data);
-            console.log('📦 Raw data Array?:', Array.isArray(data));
-            console.log('📦 Raw data:', JSON.stringify(data, null, 2));
-            console.log('✅ Sikeres adatok:', data);
-            console.log('📊 Összesen:', data.length, 'felhasználó');
             
             // Ha nem tömb, akkor próbáljuk meg kicsomagolni
             let users = Array.isArray(data) ? data : (data.rows || data.data || []);
-            console.log('📊 Feldolgozott users:', users.length, 'felhasználó');
-            console.log('👤 Minden felhasználó:', users);
-            
-            if (users.length > 0) {
-                console.log('👤 Első felhasználó:', users[0]);
-                console.log('🔑 Mező nevek:', Object.keys(users[0]));
-            }
             
             // Minden felhasználó megjelenítése, duplikációk szűrése ID alapján
             const uniqueUsers = Array.from(
                 new Map(users.map(user => [user.id || user.felh_id, user])).values()
             );
             
-            if (data.length !== uniqueUsers.length) {
-                console.warn(`⚠️ Duplikációk találva! Eredeti: ${data.length}, Egyedi: ${uniqueUsers.length}`);
-            }
-            
-            console.log('📋 Megjelenített felhasználók:', uniqueUsers.map(u => ({
-                id: u.id || u.felh_id,
-                nev: u.felhasznalonev || u.felh_nev,
-                email: u.email
-            })));
-            console.log('🔍 ===== DEBUG VÉGE =====');
-            
-            if (uniqueUsers.length === 0) {
-                console.error('⚠️ FIGYELEM: Nincs egyetlen felhasználó sem a feldolgozott adatban!');
-            }
-            
             setUsers(uniqueUsers);
             setCurrentPage(1); // Első oldalra ugrás új adatok betöltésekor
-            setShowUserManagement(true);
         } catch (err) {
             console.error('Fetch error:', err);
             setError(err.message);
@@ -120,7 +95,7 @@ const Beallitasok = () => {
 
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(`${config.API_BASE_URL}/felhasznaloTorlese/${userId}`, {
+            const response = await fetch(`${config.API_BASE_URL}/felhasznaloTorles/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -146,36 +121,75 @@ const Beallitasok = () => {
         setEditForm({
             felhasznalonev: user.felhasznalonev || user.felh_nev || '',
             email: user.email || '',
-            szerepkor: user.szerepkor || ''
+            szerepkor: user.felh_szerepkor || user.szerepkor || 'user'
         });
+        setShowEditModal(true);
     };
 
     const handleCancelEdit = () => {
         setEditingUser(null);
+        setShowEditModal(false);
         setEditForm({ felhasznalonev: '', email: '', szerepkor: '' });
     };
 
-    const handleUpdateUser = async (userId) => {
+    const handleUpdateUser = async () => {
+        if (!editForm.felhasznalonev || !editForm.email) {
+            alert('Felhasználónév és email megadása kötelező!');
+            return;
+        }
+
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(`${config.API_BASE_URL}/felhasznaloModositas/${userId}`, {
+            // Javított endpoint név - eltávolítva az ékezetes karakterek
+            const url = `${config.API_BASE_URL}/felhasznaloModosit/${editingUser}`;
+            console.log('Módosítási kérés URL:', url);
+            console.log('Módosítási adatok:', {
+                felh_nev: editForm.felhasznalonev,
+                email: editForm.email,
+                felh_szerepkor: editForm.szerepkor
+            });
+            
+            const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(editForm)
+                body: JSON.stringify({
+                    felh_nev: editForm.felhasznalonev,
+                    email: editForm.email,
+                    felh_szerepkor: editForm.szerepkor
+                })
             });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers.get('content-type'));
 
             if (!response.ok) {
-                throw new Error('Hiba a felhasználó módosításakor');
+                // Próbáljuk meg JSON-ként parse-olni, ha nem sikerül, használjuk a status text-et
+                let errorMessage = 'Hiba a felhasználó módosításakor';
+                try {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.error || errorMessage;
+                    } else {
+                        errorMessage = `Szerver hiba: ${response.status} ${response.statusText}`;
+                    }
+                } catch (parseError) {
+                    errorMessage = `Szerver hiba: ${response.status} ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
             }
 
             // Frissítjük a listát
             await fetchUsers();
+            setShowEditModal(false);
             setEditingUser(null);
+            setEditForm({ felhasznalonev: '', email: '', szerepkor: '' });
             alert('Felhasználó sikeresen módosítva!');
         } catch (err) {
+            console.error('Módosítási hiba:', err);
             alert('Hiba történt: ' + err.message);
         }
     };
@@ -184,6 +198,66 @@ const Beallitasok = () => {
         const newState = !registrationEnabled;
         setRegistrationEnabled(newState);
         localStorage.setItem('registrationEnabled', JSON.stringify(newState));
+    };
+
+    const handleSearch = async () => {
+        if (!searchTerm.trim()) {
+            alert('Kérlek adj meg keresési kifejezést!');
+            return;
+        }
+
+        setSearchLoading(true);
+        setError(null);
+        
+        try {
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                throw new Error('Nincs token. Kérlek jelentkezz be újra!');
+            }
+            
+            const response = await fetch(`${config.API_BASE_URL}/felhasznaloKereses/${encodeURIComponent(searchTerm)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    setError('Nincs találat a keresési feltételre.');
+                    setUsers([]);
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || errorData.error || `Hiba: ${response.status}`);
+                }
+            } else {
+                const data = await response.json();
+                
+                // Ha nem tömb, akkor próbáljuk meg kicsomagolni
+                let users = Array.isArray(data) ? data : (data.rows || data.data || []);
+                
+                // Duplikációk szűrése ID alapján
+                const uniqueUsers = Array.from(
+                    new Map(users.map(user => [user.id || user.felh_id, user])).values()
+                );
+                
+                setUsers(uniqueUsers);
+                setCurrentPage(1);
+            }
+        } catch (err) {
+            console.error('Keresési hiba:', err);
+            setError(err.message);
+        } finally {
+            setSearchLoading(false);
+        }
+    };
+
+    const handleClearSearch = () => {
+        setSearchTerm('');
+        setError(null);
+        setUsers([]);
     };
 
     // Ha nem admin, ne jelenítse meg az oldalt
@@ -245,14 +319,17 @@ const Beallitasok = () => {
                                 <p className="settings-description">
                                     {registrationEnabled 
                                         ? '✅ Az új felhasználók regisztrálhatnak adminisztrátori fiókot a /register oldalon.' 
-                                        : '❌ A regisztráció jelenleg le van tiltva. A /register oldal nem érhető el.'}
+                                        : '❌ A regisztráció jelenleg le van tiltva.'}
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     {/* Profilok kezelése */}
-                    <div className="settings-card">
+                    <div 
+                        className="settings-card clickable-card" 
+                        onClick={() => setShowUserManagement(true)}
+                    >
                         <div className="settings-card-header">
                             <div className="settings-card-icon">
                                 <span>�</span>
@@ -264,19 +341,9 @@ const Beallitasok = () => {
                         </div>
                         
                         <div className="settings-card-content">
-                            <button 
-                                onClick={fetchUsers} 
-                                className="settings-action-button"
-                                disabled={loading}
-                            >
-                                {loading ? '⏳ Betöltés...' : '📋 Profilok megtekintése'}
-                            </button>
-
-                            {error && (
-                                <div className="error-message">
-                                    ❌ {error}
-                                </div>
-                            )}
+                            <div className="settings-card-action">
+                                <span className="action-hint">� Kattints a megnyitáshoz</span>
+                            </div>
                         </div>
                     </div>
 
@@ -333,7 +400,7 @@ const Beallitasok = () => {
                                     <div>
                                         <h2>Regisztrált felhasználók</h2>
                                         <p className="header-subtitle">
-                                            {users.length} felhasználó • Kezelés és módosítás
+                                            {users.length > 0 ? `${users.length} felhasználó` : 'Keresés és felhasználókezelés'}
                                         </p>
                                     </div>
                                 </div>
@@ -346,30 +413,78 @@ const Beallitasok = () => {
                                 </button>
                             </div>
 
+                            {/* Keresési és szűrési rész */}
+                            <div className="user-management-search-section">
+                                <div className="search-controls-wrapper">
+                                    <div className="search-input-group-modal">
+                                        <FaSearch className="search-icon" />
+                                        <input
+                                            type="text"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && searchTerm.trim() && handleSearch()}
+                                            placeholder="Keresés felhasználónév vagy ID alapján..."
+                                            className="search-input-modal"
+                                        />
+                                        {searchTerm && (
+                                            <>
+                                                <button 
+                                                    onClick={handleSearch}
+                                                    className="inline-search-btn"
+                                                    disabled={searchLoading || !searchTerm.trim()}
+                                                    title="Keresés"
+                                                >
+                                                    {searchLoading ? (
+                                                        <div className="search-spinner"></div>
+                                                    ) : (
+                                                        <FaSearch />
+                                                    )}
+                                                </button>
+                                                <button 
+                                                    onClick={() => {
+                                                        handleClearSearch();
+                                                        fetchUsers();
+                                                    }}
+                                                    className="clear-search-btn"
+                                                    title="Törlés és összes megjelenítése"
+                                                >
+                                                    <FaTimes />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                    <button 
+                                        onClick={fetchUsers} 
+                                        className="fetch-all-btn"
+                                        disabled={loading}
+                                        title="Összes felhasználó megjelenítése"
+                                    >
+                                        <FaUsers />
+                                        <span>{loading ? 'Betöltés...' : 'Összes'}</span>
+                                    </button>
+                                </div>
+                            </div>
+
                             <div className="users-grid-container">
                                 {users.length === 0 ? (
                                     <div className="no-users-new">
                                         <div className="no-users-icon">
                                             <FaInbox size={80} />
                                         </div>
-                                        <h3>Nincs regisztrált felhasználó</h3>
-                                        <p>Még nem található felhasználó az adatbázisban</p>
+                                        {error ? (
+                                            <>
+                                                <h3>❌ {error}</h3>
+                                                <p>Próbáld meg újra vagy módosítsd a keresési feltételt</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <h3>Nincs regisztrált felhasználó</h3>
+                                                <p>Még nem található felhasználó az adatbázisban</p>
+                                            </>
+                                        )}
                                     </div>
                                 ) : (
                                     <>
-                                        {/* Debug info - később törölhető */}
-                                        <details className="debug-section">
-                                            <summary>
-                                                🔍 Debug: Backend adatok ({users.length} felhasználó)
-                                            </summary>
-                                            <div className="debug-content">
-                                                <p><strong>Első felhasználó mezői:</strong></p>
-                                                <pre>{users.length > 0 ? JSON.stringify(users[0], null, 2) : 'Nincs adat'}</pre>
-                                                <p><strong>Összes felhasználó:</strong></p>
-                                                <pre>{JSON.stringify(users, null, 2)}</pre>
-                                            </div>
-                                        </details>
-
                                         {/* Lapozási információ */}
                                         <div className="pagination-info">
                                             <p>
@@ -385,78 +500,9 @@ const Beallitasok = () => {
                                                 .map((user, index) => {
                                                     const userId = user.felh_id || user.id;
                                                     return (
-                                                <div key={userId} className={`user-card ${editingUser === userId ? 'editing' : ''}`}>
-                                                    {editingUser === userId ? (
-                                                        /* SZERKESZTÉSI MÓD */
-                                                        <>
-                                                            <div className="user-card-header editing">
-                                                                <div className="edit-mode-badge">
-                                                                    <FaEdit />
-                                                                    <span>Szerkesztési mód</span>
-                                                                </div>
-                                                            </div>
-                                                            <div className="user-card-body editing">
-                                                                <div className="edit-form-group">
-                                                                    <label className="edit-label">
-                                                                        <FaUser className="label-icon" />
-                                                                        Felhasználónév
-                                                                    </label>
-                                                                    <input
-                                                                        type="text"
-                                                                        value={editForm.felhasznalonev}
-                                                                        onChange={(e) => setEditForm({...editForm, felhasznalonev: e.target.value})}
-                                                                        className="edit-input-new"
-                                                                        placeholder="Felhasználónév"
-                                                                    />
-                                                                </div>
-                                                                <div className="edit-form-group">
-                                                                    <label className="edit-label">
-                                                                        <FaEnvelope className="label-icon" />
-                                                                        Email cím
-                                                                    </label>
-                                                                    <input
-                                                                        type="email"
-                                                                        value={editForm.email}
-                                                                        onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                                                                        className="edit-input-new"
-                                                                        placeholder="email@example.com"
-                                                                    />
-                                                                </div>
-                                                                <div className="edit-form-group">
-                                                                    <label className="edit-label">
-                                                                        <FaCrown className="label-icon" />
-                                                                        Szerepkör
-                                                                    </label>
-                                                                    <select
-                                                                        value={editForm.szerepkor}
-                                                                        onChange={(e) => setEditForm({...editForm, szerepkor: e.target.value})}
-                                                                        className="edit-select-new"
-                                                                    >
-                                                                        <option value="admin">Adminisztrátor</option>
-                                                                        <option value="user">Felhasználó</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="user-card-actions editing">
-                                                                <button
-                                                                    onClick={() => handleUpdateUser(userId)}
-                                                                    className="action-btn save-btn"
-                                                                >
-                                                                    <FaCheck className="btn-icon" />
-                                                                    <span>Mentés</span>
-                                                                </button>
-                                                                <button
-                                                                    onClick={handleCancelEdit}
-                                                                    className="action-btn cancel-btn"
-                                                                >
-                                                                    <FaTimes className="btn-icon" />
-                                                                    <span>Mégse</span>
-                                                                </button>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        /* NORMÁL NÉZET */
-                                                        <>
+                                                <div key={userId} className="user-card">
+                                                    {/* NORMÁL NÉZET */}
+                                                    <>
                                                             <div className="user-card-header">
                                                                 <div className="user-avatar">
                                                                     <span className="avatar-text">
@@ -472,8 +518,8 @@ const Beallitasok = () => {
                                                                         {user.email || 'Nincs email megadva'}
                                                                     </p>
                                                                 </div>
-                                                                <span className={`role-badge-new ${user.szerepkor}`}>
-                                                                    {user.szerepkor === 'admin' ? (
+                                                                <span className={`role-badge-new ${user.felh_szerepkor || user.szerepkor}`}>
+                                                                    {(user.felh_szerepkor || user.szerepkor) === 'admin' ? (
                                                                         <>
                                                                             <FaCrown className="badge-icon" />
                                                                             <span>Admin</span>
@@ -533,7 +579,6 @@ const Beallitasok = () => {
                                                                 </button>
                                                             </div>
                                                         </>
-                                                    )}
                                                 </div>
                                             );
                                         })}
@@ -605,6 +650,92 @@ const Beallitasok = () => {
                                         )}
                                     </>
                                 )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Szerkesztési Modal */}
+                {showEditModal && (
+                    <div className="edit-modal-overlay">
+                        <div className="edit-modal">
+                            <div className="edit-modal-header">
+                                <h2>
+                                    <FaEdit className="modal-icon" />
+                                    Felhasználó szerkesztése
+                                </h2>
+                                <button 
+                                    onClick={handleCancelEdit}
+                                    className="modal-close-btn"
+                                    title="Bezárás"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+                            
+                            <div className="edit-modal-body">
+
+                                <div className="form-group-modal">
+                                    <label>
+                                        <FaUser className="form-icon" />
+                                        Felhasználónév *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={editForm.felhasznalonev}
+                                        onChange={(e) => setEditForm({...editForm, felhasznalonev: e.target.value})}
+                                        placeholder="Felhasználónév"
+                                        className="modal-input"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group-modal">
+                                    <label>
+                                        <FaEnvelope className="form-icon" />
+                                        Email cím *
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={editForm.email}
+                                        onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                                        placeholder="email@example.com"
+                                        className="modal-input"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group-modal">
+                                    <label>
+                                        <FaCrown className="form-icon" />
+                                        Szerepkör *
+                                    </label>
+                                    <select
+                                        value={editForm.szerepkor}
+                                        onChange={(e) => setEditForm({...editForm, szerepkor: e.target.value})}
+                                        className="modal-select"
+                                    >
+                                        <option value="user">Felhasználó</option>
+                                        <option value="admin">Adminisztrátor</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="edit-modal-footer">
+                                <button
+                                    onClick={handleUpdateUser}
+                                    className="modal-btn save-btn-modal"
+                                >
+                                    <FaCheck />
+                                    <span>Mentés</span>
+                                </button>
+                                <button
+                                    onClick={handleCancelEdit}
+                                    className="modal-btn cancel-btn-modal"
+                                >
+                                    <FaTimes />
+                                    <span>Mégse</span>
+                                </button>
                             </div>
                         </div>
                     </div>
