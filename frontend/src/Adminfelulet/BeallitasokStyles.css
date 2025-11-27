@@ -245,26 +245,26 @@
     transform: translateX(-3px);
 }
 
-/* Animációk */
+/* Animációk - Újított változat */
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px) scale(0.98);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .settings-card {
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
-.settings-card:nth-child(1) { animation-delay: 0.1s; }
-.settings-card:nth-child(2) { animation-delay: 0.2s; }
-.settings-card:nth-child(3) { animation-delay: 0.3s; }
-.settings-card:nth-child(4) { animation-delay: 0.4s; }
+.settings-card:nth-child(1) { animation-delay: 0.05s; }
+.settings-card:nth-child(2) { animation-delay: 0.1s; }
+.settings-card:nth-child(3) { animation-delay: 0.15s; }
+.settings-card:nth-child(4) { animation-delay: 0.2s; }
 
 /* Profilkezelő gomb */
 .settings-action-button {
@@ -429,7 +429,7 @@
    ÚJ FELHASZNÁLÓKEZELŐ DIZÁJN - KÁRTYAALAPÚ
    ============================================ */
 
-/* Modal háttér és konténer */
+/* Modal háttér és konténer - Újított animációk */
 .user-management-modal-new {
     position: fixed;
     top: 0;
@@ -441,7 +441,7 @@
     justify-content: center;
     align-items: center;
     padding: 20px;
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeInBackdrop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-backdrop {
@@ -452,14 +452,17 @@
     bottom: 0;
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
+    animation: fadeInBackdrop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes fadeIn {
+@keyframes fadeInBackdrop {
     from {
         opacity: 0;
+        backdrop-filter: blur(0px);
     }
     to {
         opacity: 1;
+        backdrop-filter: blur(8px);
     }
 }
 
@@ -473,14 +476,14 @@
     max-height: 90vh;
     overflow: hidden;
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
-    animation: slideInScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: modalSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     border: 1px solid var(--border);
 }
 
-@keyframes slideInScale {
+@keyframes modalSlideIn {
     from {
         opacity: 0;
-        transform: translateY(50px) scale(0.95);
+        transform: translateY(-30px) scale(0.9);
     }
     to {
         opacity: 1;
@@ -546,20 +549,48 @@
     border-radius: 50%;
     font-size: 1.1rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.close-button-new::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 68, 68, 0.4) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.close-button-new:hover::before {
+    opacity: 1;
 }
 
 .close-button-new svg {
     display: block;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .close-button-new:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.1) rotate(90deg);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(239, 68, 68, 0.9);
+    transform: scale(1.15);
+    border-color: rgba(239, 68, 68, 1);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.close-button-new:hover svg {
+    transform: rotate(90deg);
+}
+
+.close-button-new:active {
+    transform: scale(1.05);
 }
 
 /* Grid konténer */
@@ -629,31 +660,43 @@
     gap: 25px;
 }
 
-/* Felhasználó kártya */
+/* Felhasználó kártya - Továbbfejlesztett animációk */
 .user-card {
     background: var(--bg-primary);
     border: 1px solid var(--border);
     border-radius: 20px;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
-    animation: fadeInUp 0.5s ease-out;
+    animation: cardFadeInScale 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
-@keyframes fadeInUp {
+@keyframes cardFadeInScale {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(15px) scale(0.95);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
+/* Animáció késleltetések a kártyákhoz */
+.user-card:nth-child(1) { animation-delay: 0.05s; }
+.user-card:nth-child(2) { animation-delay: 0.08s; }
+.user-card:nth-child(3) { animation-delay: 0.11s; }
+.user-card:nth-child(4) { animation-delay: 0.14s; }
+.user-card:nth-child(5) { animation-delay: 0.17s; }
+.user-card:nth-child(6) { animation-delay: 0.2s; }
+.user-card:nth-child(7) { animation-delay: 0.23s; }
+.user-card:nth-child(8) { animation-delay: 0.26s; }
+.user-card:nth-child(9) { animation-delay: 0.29s; }
+.user-card:nth-child(10) { animation-delay: 0.32s; }
+
 .user-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.2);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.25);
     border-color: var(--accent);
 }
 
@@ -677,7 +720,7 @@
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, var(--bg-secondary) 100%);
 }
 
-/* Avatar */
+/* Avatar - Továbbfejlesztett animációk */
 .user-avatar {
     width: 70px;
     height: 70px;
@@ -689,6 +732,12 @@
     position: relative;
     flex-shrink: 0;
     box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.user-card:hover .user-avatar {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.5);
 }
 
 .avatar-text {
@@ -696,6 +745,11 @@
     font-weight: 700;
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.user-card:hover .avatar-text {
+    transform: scale(1.1);
 }
 
 .avatar-glow {
@@ -708,12 +762,26 @@
     border-radius: 50%;
     opacity: 0;
     filter: blur(10px);
-    transition: opacity 0.3s ease;
+    transition: all 0.4s ease;
     z-index: -1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.3;
+    }
 }
 
 .user-card:hover .avatar-glow {
-    opacity: 0.6;
+    opacity: 0.7;
+    animation: none;
+    filter: blur(15px);
 }
 
 /* User info */
@@ -741,7 +809,7 @@
     text-overflow: ellipsis;
 }
 
-/* Szerepkör badge új */
+/* Szerepkör badge új - továbbfejlesztett animációkkal */
 .role-badge-new {
     position: absolute;
     top: 15px;
@@ -754,11 +822,32 @@
     font-size: 0.85rem;
     font-weight: 600;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.user-card:hover .role-badge-new {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 .role-badge-new.admin {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     color: white;
+}
+
+.role-badge-new.admin .badge-icon {
+    animation: crownShine 3s ease-in-out infinite;
+}
+
+@keyframes crownShine {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.1);
+        filter: brightness(1.3);
+    }
 }
 
 .role-badge-new.user {
@@ -771,6 +860,11 @@
     font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.user-card:hover .badge-icon {
+    transform: rotate(360deg);
 }
 
 /* Kártya tartalom */
@@ -824,7 +918,7 @@
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, var(--bg-secondary) 100%);
 }
 
-/* Akció gombok */
+/* Akció gombok - Továbbfejlesztett hover effektekkel */
 .action-btn {
     flex: 1;
     display: flex;
@@ -837,13 +931,38 @@
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.action-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn-icon {
     font-size: 1rem;
     display: inline-flex;
     align-items: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.action-btn:hover .btn-icon {
+    transform: scale(1.15);
 }
 
 .edit-btn-new {
@@ -855,8 +974,14 @@
 .edit-btn-new:hover {
     background: #3b82f6;
     color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);
+    border-color: #3b82f6;
+}
+
+.edit-btn-new:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
 }
 
 .delete-btn-new {
@@ -868,8 +993,14 @@
 .delete-btn-new:hover {
     background: #ef4444;
     color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
+    border-color: #ef4444;
+}
+
+.delete-btn-new:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
 }
 
 .save-btn {
@@ -967,13 +1098,25 @@
     cursor: pointer;
 }
 
-/* Nincs felhasználó */
+/* Nincs felhasználó - továbbfejlesztett animációkkal */
 .no-users-new {
     text-align: center;
     padding: 80px 40px;
     background: var(--bg-primary);
     border-radius: 20px;
     border: 2px dashed var(--border);
+    animation: noUsersFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes noUsersFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .no-users-icon {
@@ -984,6 +1127,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    animation: iconBounce 2s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .no-users-new h3 {
@@ -994,6 +1147,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    animation: fadeInUp 0.6s ease 0.2s both;
 }
 
 .no-users-new h3:has(+ p) {
@@ -1005,6 +1159,7 @@
     color: var(--text-secondary);
     font-size: 1rem;
     margin: 0;
+    animation: fadeInUp 0.6s ease 0.3s both;
 }
 
 /* Reszponzív dizájn */
@@ -1106,18 +1261,43 @@
     cursor: pointer;
     font-size: 0.95rem;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     align-items: center;
     gap: 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.pagination-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(66, 135, 245, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+.pagination-btn:hover:not(:disabled)::before {
+    width: 200px;
+    height: 200px;
 }
 
 .pagination-btn:hover:not(:disabled) {
     background: var(--accent);
     color: white;
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(66, 135, 245, 0.3);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(66, 135, 245, 0.35);
+}
+
+.pagination-btn:active:not(:disabled) {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 3px 8px rgba(66, 135, 245, 0.3);
 }
 
 .pagination-btn:disabled {
@@ -1141,11 +1321,17 @@
 }
 
 .pagination-btn.page-number.active {
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent), #5a8ef5);
     color: white;
     border-color: var(--accent);
     font-weight: 700;
-    box-shadow: 0 4px 12px rgba(66, 135, 245, 0.4);
+    box-shadow: 0 6px 16px rgba(66, 135, 245, 0.45);
+    transform: scale(1.1);
+}
+
+.pagination-btn.page-number.active::before {
+    width: 200px;
+    height: 200px;
 }
 
 .pagination-ellipsis {
@@ -1204,15 +1390,18 @@
     justify-content: center;
     z-index: 10000;
     padding: 20px;
-    animation: fadeIn 0.2s ease-out;
+    animation: editOverlayFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(4px);
 }
 
-@keyframes fadeIn {
+@keyframes editOverlayFadeIn {
     from {
         opacity: 0;
+        backdrop-filter: blur(0px);
     }
     to {
         opacity: 1;
+        backdrop-filter: blur(4px);
     }
 }
 
@@ -1225,16 +1414,16 @@
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    animation: slideUp 0.3s ease-out;
+    animation: editModalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes slideUp {
+@keyframes editModalPop {
     from {
-        transform: translateY(30px);
+        transform: scale(0.85);
         opacity: 0;
     }
     to {
-        transform: translateY(0);
+        transform: scale(1);
         opacity: 1;
     }
 }
@@ -1274,12 +1463,17 @@
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .modal-close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(90deg);
+    background: rgba(255, 68, 68, 0.9);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4);
+}
+
+.modal-close-btn:active {
+    transform: rotate(90deg) scale(0.95);
 }
 
 .edit-modal-body {
@@ -1331,14 +1525,23 @@
     color: var(--text-primary);
     font-size: 0.95rem;
     font-family: inherit;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
 .modal-input:focus,
 .modal-select:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(66, 135, 245, 0.1);
+    box-shadow: 0 0 0 4px rgba(66, 135, 245, 0.12);
+    transform: translateY(-1px);
+    background: var(--bg-secondary);
+}
+
+.modal-input:hover,
+.modal-select:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .form-hint {
@@ -1368,18 +1571,41 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.modal-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .save-btn-modal {
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent), #5a8ef5);
     color: white;
 }
 
 .save-btn-modal:hover {
-    background: #5a8ef5;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(66, 135, 245, 0.4);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 25px rgba(66, 135, 245, 0.5);
+}
+
+.save-btn-modal:active {
+    transform: translateY(-1px) scale(1);
 }
 
 .cancel-btn-modal {
@@ -1391,6 +1617,12 @@
 .cancel-btn-modal:hover {
     background: var(--bg-primary);
     border-color: var(--text-muted);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn-modal:active {
+    transform: translateY(0);
 }
 
 /* Reszponzív modal */
@@ -1479,13 +1711,36 @@
     border: 2px solid var(--border);
     border-radius: 10px;
     padding: 0 14px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     flex: 1;
+}
+
+.search-input-group-modal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 10px;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--accent), #667eea);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.search-input-group-modal:focus-within::before {
+    opacity: 1;
 }
 
 .search-input-group-modal:focus-within {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12), 0 8px 24px rgba(124, 58, 237, 0.15);
+    transform: translateY(-1px);
 }
 
 .search-input-modal {
@@ -1496,14 +1751,21 @@
     outline: none;
     color: var(--text-primary);
     font-size: 0.95rem;
+    transition: all 0.3s ease;
 }
 
 .search-input-modal::placeholder {
     color: var(--text-muted);
     font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
-/* Inline keresés gomb - csak akkor jelenik meg, ha van szöveg */
+.search-input-modal:focus::placeholder {
+    transform: translateX(5px);
+    opacity: 0.7;
+}
+
+/* Inline keresés gomb - továbbfejlesztett animációkkal */
 .inline-search-btn {
     background: rgba(124, 58, 237, 0.1);
     color: var(--accent);
@@ -1512,25 +1774,45 @@
     height: 36px;
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.95rem;
     flex-shrink: 0;
     margin-right: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.inline-search-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(124, 58, 237, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+.inline-search-btn:hover:not(:disabled)::before {
+    width: 100px;
+    height: 100px;
 }
 
 .inline-search-btn:hover:not(:disabled) {
     background: var(--accent);
     color: white;
     border-color: var(--accent);
-    transform: translateY(-1px) scale(1.05);
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    transform: translateY(-2px) scale(1.1) rotate(10deg);
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
 }
 
 .inline-search-btn:active:not(:disabled) {
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotate(0deg);
 }
 
 .inline-search-btn:disabled {
@@ -1552,7 +1834,7 @@
     to { transform: rotate(360deg); }
 }
 
-/* Összes gomb - mindig látható */
+/* Összes gomb - továbbfejlesztett animációkkal */
 .fetch-all-btn {
     background: linear-gradient(135deg, var(--accent), #667eea);
     color: white;
@@ -1562,17 +1844,41 @@
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     align-items: center;
     gap: 8px;
     white-space: nowrap;
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.fetch-all-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+.fetch-all-btn:hover:not(:disabled)::before {
+    width: 200px;
+    height: 200px;
 }
 
 .fetch-all-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+}
+
+.fetch-all-btn:active:not(:disabled) {
+    transform: translateY(-1px) scale(1);
 }
 
 .fetch-all-btn:disabled {
@@ -1583,6 +1889,11 @@
 
 .fetch-all-btn svg {
     font-size: 1rem;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fetch-all-btn:hover:not(:disabled) svg {
+    transform: scale(1.2) rotate(10deg);
 }
 
 .error-message-modal {
