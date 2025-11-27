@@ -334,11 +334,10 @@ app.get('/felhasznaloSzuro/:filterBy/:order', authenticateToken, (req, res) => {
     let validFilterBy;
     let validOrder;
 
-    // Szűrési feltételek érvényesítése - JAVÍTOTT MEZŐNEVEK
     if (filterBy === 'regisztracio_ido') {
-        validFilterBy = 'regisztracio_datuma';  // ✅ Helyesen az adatbázis mezőnév
+        validFilterBy = 'regisztracio_datuma'; 
     } else if (filterBy === 'szerepkor') {
-        validFilterBy = 'felh_szerepkor';  // ✅ Helyesen az adatbázis mezőnév
+        validFilterBy = 'felh_szerepkor'; 
     } else {
         return res.status(400).json({ message: 'Érvénytelen szűrési feltétel.' });
     }
