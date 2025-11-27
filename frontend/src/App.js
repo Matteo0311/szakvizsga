@@ -12,6 +12,7 @@ import ProtectedRoute from './ProtectedRoute';
 import './App.css';
 import AdminNavbar from './Adminfelulet/AdminNavbar';
 import JatekNavbar from './Jatek/JatekNavbar';
+import FC26Ertekeles from './Jatek/Foci/FC26Ertekeles/FC26Ertekeles';
 
 // Navbar komponens, amely feltételesen jelenik meg
 const ConditionalNavbar = () => {
@@ -32,6 +33,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Temavalasztas />} />
               <Route path="/temavalasztas" element={<Temavalasztas />} />
+              <Route path="/fc26-ertekeles" element={<FC26Ertekeles />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route 
