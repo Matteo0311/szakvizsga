@@ -47,6 +47,8 @@ const Temavalasztas = () => {
         // Navigálás a játék oldalra
         if (selectedTheme.title === 'Foci' && subtheme.title === 'FC 26 játékos értékelés') {
             navigate('/fc26-ertekeles');
+        } else if (selectedTheme.title === 'Foci' && subtheme.title === 'Játékos életkor') {
+            navigate('/jatekos-eletkor');
         } else {
             console.log('Játék indítása:', selectedTheme.title, subtheme.title);
             // További játékok itt implementálhatók
