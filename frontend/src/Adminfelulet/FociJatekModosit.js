@@ -219,6 +219,52 @@ const FociJatekModosit=({kivalasztott})=>{
                 }
         };
 
+        // Törlés
+        const JatekosTorles = async (jatekos) => {
+                const megerosites = window.confirm(`Biztos, hogy törölni szeretnéd a következő játékost: ${jatekos.foci_jatekos_nev}?`);
+                if (!megerosites) return;
+
+                try {
+                        const response = await fetch(`${Cim.Cim}/fociJatekosTorles/${jatekos.foci_jatekos_id}`, {
+                                method: 'DELETE',
+                        });
+
+                        if (response.ok) {
+                                alert('A játékos sikeresen törölve!');
+                                leToltes();
+                        } else {
+                                const error = await response.json();
+                                alert(`Hiba történt: ${error.error}`);
+                        }
+                } catch (error) {
+                        console.error('Hiba történt a törlés során:', error);
+                        alert('Hiba történt a törlés során!');
+                }
+        };
+
+        const JatekosTorlesModositasFeluletrol = async () => {
+                const megerosites = window.confirm(`Biztos, hogy törölni szeretnéd a következő játékost: ${modositandoJatekos.foci_jatekos_nev}?`);
+                if (!megerosites) return;
+
+                try {
+                        const response = await fetch(`${Cim.Cim}/fociJatekosTorles/${modositandoJatekos.foci_jatekos_id}`, {
+                                method: 'DELETE',
+                        });
+
+                        if (response.ok) {
+                                alert('A játékos sikeresen törölve!');
+                                ModositasFeluletBezaras();
+                                leToltes();
+                        } else {
+                                const error = await response.json();
+                                alert(`Hiba történt: ${error.error}`);
+                        }
+                } catch (error) {
+                        console.error('Hiba történt a törlés során:', error);
+                        alert('Hiba történt a törlés során!');
+                }
+        };
+
         // Piaci érték formázása millióban (pl. 65m)
         const formatMillio = (ertek) => {
                 if (ertek === null || ertek === undefined || ertek === "") return "-";
@@ -264,6 +310,7 @@ const FociJatekModosit=({kivalasztott})=>{
                                 </div>
                                 <div className="modal-lablelc">
                                                         <button className="admin-button" onClick={JatekosModositas}>Módosítások mentése</button>
+                                                        <button className="admin-button torles" style={{backgroundColor: '#dc3545'}} onClick={JatekosTorlesModositasFeluletrol}>Törlés</button>
                                   <button className="admin-button visszavon" onClick={ModositasFeluletBezaras}>Mégsem</button>
                                 </div>
                           </div>

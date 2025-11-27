@@ -278,6 +278,23 @@ app.get('/focijatekosKereses/:searchTerm', (req, res) => {
     });
 });
 
+// Foci játékos törlése ID alapján
+app.delete('/focijatekosTorles/:id', (req, res) => {
+    const foci_jatekos_id_from_url = req.params.id;
+
+    pool.query(
+        'DELETE FROM foci_jatekos WHERE foci_jatekos_id = ?',
+        [foci_jatekos_id_from_url],
+        (error, results) => {
+            if (error) {
+                console.error('Hiba a foci játékos törlésekor:', error);
+                res.status(500).json({ error: 'Hiba a foci játékos törlésekor' });
+            } else {
+                res.json({ message: 'Foci játékos sikeresen törölve', results });
+            }
+        }
+    );
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
