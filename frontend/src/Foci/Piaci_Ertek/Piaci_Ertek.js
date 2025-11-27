@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Cim from '../../Cim';
-import './FC26ErtekelesStyles.css';
+import './Piaci_ErtekStyles.css';
 
-const FC26Ertekeles = () => {
+const Piaci_Ertek = () => {
     const [jatekosok, setJatekosok] = useState([]);
     const [aktualisJatekos, setAktualisJatekos] = useState(null);
     const [kovetkezoJatekos, setKovetkezoJatekos] = useState(null);
@@ -17,7 +17,7 @@ const FC26Ertekeles = () => {
 
     useEffect(() => {
         jatekosokBetoltese();
-        const mentettLegjobb = localStorage.getItem('legjobPontszam');
+        const mentettLegjobb = localStorage.getItem('legjobPontszamPiaci');
         if (mentettLegjobb) {
             setLegjobPontszam(parseInt(mentettLegjobb));
         }
@@ -30,8 +30,8 @@ const FC26Ertekeles = () => {
             const response = await fetch(Cim.Cim + "/fociJatekosAdatBetolt");
             if (response.ok) {
                 const data = await response.json();
-                // Szűrjük ki azokat, akiknek van FC26 értékelése
-                const szurtData = data.filter(j => j.foci_jatekos_ertekeles && j.foci_jatekos_ertekeles > 0);
+                // Szűrjük ki azokat, akiknek van piaci értéke
+                const szurtData = data.filter(j => j.foci_jatekos_piaci_ertek && j.foci_jatekos_piaci_ertek > 0);
                 setJatekosok(szurtData);
                 
                 if (szurtData.length >= 2) {
@@ -79,11 +79,11 @@ const FC26Ertekeles = () => {
 
         setMegmutat(true);
         
-        const aktualisErtek = parseFloat(aktualisJatekos.foci_jatekos_ertekeles);
-        const kovetkezoErtek = parseFloat(kovetkezoJatekos.foci_jatekos_ertekeles);
+        const aktualisErtek = parseFloat(aktualisJatekos.foci_jatekos_piaci_ertek);
+        const kovetkezoErtek = parseFloat(kovetkezoJatekos.foci_jatekos_piaci_ertek);
         
-        // Ha az aktuális játékosra kattintottak, azt gondolják, hogy ő a nagyobb
-        // Ha a következő játékosra kattintottak, azt gondolják, hogy ő a nagyobb
+        // Ha az aktuális játékosra kattintottak, azt gondolják, hogy ő az értékesebb
+        // Ha a következő játékosra kattintottak, azt gondolják, hogy ő az értékesebb
         let helyes = false;
         if (valasztottJatekos === 'aktual' && aktualisErtek >= kovetkezoErtek) {
             helyes = true;
@@ -99,7 +99,7 @@ const FC26Ertekeles = () => {
                 
                 if (ujPontszam > legjobPontszam) {
                     setLegjobPontszam(ujPontszam);
-                    localStorage.setItem('legjobPontszam', ujPontszam.toString());
+                    localStorage.setItem('legjobPontszamPiaci', ujPontszam.toString());
                 }
                 
                 // Következő kör
@@ -119,12 +119,18 @@ const FC26Ertekeles = () => {
     };
 
     const formatErtek = (ertek) => {
-        return parseInt(ertek);
+        const szam = parseFloat(ertek);
+        if (szam >= 1000000) {
+            return (szam / 1000000).toFixed(1) + 'M';
+        } else if (szam >= 1000) {
+            return (szam / 1000).toFixed(0) + 'K';
+        }
+        return szam.toLocaleString('hu-HU');
     };
 
     if (tolt) {
         return (
-            <div className="fc26-container">
+            <div className="piaci-container">
                 <div className="loading">Betöltés...</div>
             </div>
         );
@@ -132,7 +138,7 @@ const FC26Ertekeles = () => {
 
     if (hiba) {
         return (
-            <div className="fc26-container">
+            <div className="piaci-container">
                 <div className="error">Hiba történt az adatok betöltése közben!</div>
             </div>
         );
@@ -140,7 +146,7 @@ const FC26Ertekeles = () => {
 
     if (jatekVege) {
         return (
-            <div className="fc26-container">
+            <div className="piaci-container">
                 <div className="game-over">
                     <h1>Játék vége!</h1>
                     <div className="final-score">
@@ -157,16 +163,16 @@ const FC26Ertekeles = () => {
 
     if (!aktualisJatekos || !kovetkezoJatekos) {
         return (
-            <div className="fc26-container">
+            <div className="piaci-container">
                 <div className="error">Nincs elég játékos az adatbázisban!</div>
             </div>
         );
     }
 
     return (
-        <div className="fc26-container">
+        <div className="piaci-container">
             <div className="game-header">
-                <h1>Higher or Lower - FC26 Értékelés</h1>
+                <h1>Higher or Lower - Piaci Érték</h1>
                 <div className="score-board">
                     <span className="current-score">Pontszám: {pontszam}</span>
                     <span className="best-score">Legjobb: {legjobPontszam}</span>
@@ -182,12 +188,12 @@ const FC26Ertekeles = () => {
                     <div className="player-info">
                         <h2>{aktualisJatekos.foci_jatekos_nev}</h2>
                         <div className="player-value">
-                            <h3>FC26 Értékelés</h3>
-                            <p className="value">{formatErtek(aktualisJatekos.foci_jatekos_ertekeles)}</p>
+                            <h3>Piaci Érték</h3>
+                            <p className="value">{formatErtek(aktualisJatekos.foci_jatekos_piaci_ertek)} <span className="unit">€</span></p>
                         </div>
                     </div>
                     {!megmutat && !jatekVege && (
-                        <div className="click-hint">Kattints, ha ez a nagyobb!</div>
+                        <div className="click-hint">Kattints, ha ez az értékesebb!</div>
                     )}
                 </div>
 
@@ -203,16 +209,16 @@ const FC26Ertekeles = () => {
                     <div className="player-info">
                         <h2>{kovetkezoJatekos.foci_jatekos_nev}</h2>
                         <div className="player-value">
-                            <h3>FC26 Értékelés</h3>
+                            <h3>Piaci Érték</h3>
                             {megmutat ? (
-                                <p className="value revealed">{formatErtek(kovetkezoJatekos.foci_jatekos_ertekeles)}</p>
+                                <p className="value revealed">{formatErtek(kovetkezoJatekos.foci_jatekos_piaci_ertek)} <span className="unit">€</span></p>
                             ) : (
                                 <p className="value hidden">???</p>
                             )}
                         </div>
                     </div>
                     {!megmutat && !jatekVege && (
-                        <div className="click-hint">Kattints, ha ez a nagyobb!</div>
+                        <div className="click-hint">Kattints, ha ez az értékesebb!</div>
                     )}
                 </div>
             </div>
@@ -226,4 +232,4 @@ const FC26Ertekeles = () => {
     );
 };
 
-export default FC26Ertekeles;
+export default Piaci_Ertek;

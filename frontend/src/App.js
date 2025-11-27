@@ -16,6 +16,7 @@ import AdminNavbar from './Adminfelulet/AdminNavbar';
 import JatekNavbar from './Jatek/JatekNavbar';
 import FC26Ertekeles from './Foci/FC26Ertekeles/FC26Ertekeles';
 import JatekosEletkor from './Foci/JatekosEletkor/JatekosEletkor';
+import Piaci_Ertek from './Foci/Piaci_Ertek/Piaci_Ertek';
 
 // Navbar komponens, amely feltételesen jelenik meg
 const ConditionalNavbar = () => {
@@ -38,6 +39,7 @@ function App() {
               <Route path="/temavalasztas" element={<Temavalasztas />} />
               <Route path="/fc26-ertekeles" element={<FC26Ertekeles />} />
               <Route path="/jatekos-eletkor" element={<JatekosEletkor />} />
+              <Route path="/piaci-ertek" element={<Piaci_Ertek />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route 

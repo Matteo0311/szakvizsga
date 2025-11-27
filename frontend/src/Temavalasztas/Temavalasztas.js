@@ -49,6 +49,8 @@ const Temavalasztas = () => {
             navigate('/fc26-ertekeles');
         } else if (selectedTheme.title === 'Foci' && subtheme.title === 'Játékos életkor') {
             navigate('/jatekos-eletkor');
+        } else if (selectedTheme.title === 'Foci' && subtheme.title === 'Játékos piaci érték') {
+            navigate('/piaci-ertek');
         } else {
             console.log('Játék indítása:', selectedTheme.title, subtheme.title);
             // További játékok itt implementálhatók
