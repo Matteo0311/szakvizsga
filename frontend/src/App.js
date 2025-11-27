@@ -45,9 +45,9 @@ function App() {
               <Route 
                 path="/adminfelulet" 
                 element={
-                  <AdminRoute>
+                  <ProtectedRoute>
                     <Adminfelulet />
-                  </AdminRoute>
+                  </ProtectedRoute>
                 } 
               />
               <Route 
@@ -61,25 +61,25 @@ function App() {
               <Route 
                 path="/orszagmodosit" 
                 element={
-                  <AdminRoute>
+                  <ProtectedRoute>
                     <OrszagModosit />
-                  </AdminRoute>
+                  </ProtectedRoute>
                 } 
               />
               <Route 
                 path="/focijatekmodosit" 
                 element={
-                  <AdminRoute>
+                  <ProtectedRoute>
                     <FociJatekModosit />
-                  </AdminRoute>
+                  </ProtectedRoute>
                 } 
               />
               <Route 
                 path="/backend-test" 
                 element={
-                  <AdminRoute>
+                  <ProtectedRoute>
                     <BackendTest />
-                  </AdminRoute>
+                  </ProtectedRoute>
                 } 
               />
             </Routes>

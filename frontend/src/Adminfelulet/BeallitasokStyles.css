@@ -361,6 +361,9 @@
     width: 36px;
     height: 36px;
     font-size: 0.9rem;
+    position: relative;
+    z-index: 25;
+    pointer-events: auto;
 }
 
 .clear-search-btn:hover {
@@ -453,6 +456,7 @@
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
     animation: fadeInBackdrop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
 }
 
 @keyframes fadeInBackdrop {
@@ -478,6 +482,8 @@
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
     animation: modalSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     border: 1px solid var(--border);
+    z-index: 10;
+    pointer-events: auto;
 }
 
 @keyframes modalSlideIn {
@@ -501,7 +507,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 30;
 }
 
 .header-title-section {
@@ -555,6 +561,8 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
+    z-index: 40;
+    pointer-events: auto;
 }
 
 .close-button-new::before {
@@ -1220,6 +1228,37 @@
     .action-btn {
         width: 100%;
     }
+
+    /* Szűrési rész mobil nézetben */
+    .filter-controls-wrapper {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .filter-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filter-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .fetch-all-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .search-controls-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-input-group-modal {
+        width: 100%;
+    }
 }
 
 /* Lapozási stílusok */
@@ -1654,6 +1693,63 @@
         width: 100%;
         justify-content: center;
     }
+
+    /* Szűrési rész mobil nézetben */
+    .filter-controls-wrapper {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .filter-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filter-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .fetch-all-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .search-controls-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-input-group-modal {
+        width: 100%;
+    }
+
+    /* Új szűrési dizájn mobil nézetben */
+    .filter-controls-enhanced {
+        flex-direction: column;
+    }
+
+    .filter-group-enhanced {
+        min-width: 100%;
+    }
+
+    .filter-actions-enhanced {
+        flex-direction: column;
+    }
+
+    .apply-filter-btn,
+    .reset-filter-btn {
+        width: 100%;
+    }
+
+    .search-bar-container {
+        width: 100%;
+    }
+
+    .filter-section-container {
+        padding: 15px;
+    }
 }
 
 /* Kattintható kártya stílusok */
@@ -1692,169 +1788,222 @@
 
 /* Keresési rész a modalban */
 .user-management-search-section {
-    padding: 18px 30px;
-    background: var(--bg-secondary);
+    padding: 20px 30px;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(102, 126, 234, 0.05));
     border-bottom: 1px solid var(--border);
-}
-
-.search-controls-wrapper {
+    position: relative;
+    z-index: 20;
     display: flex;
-    gap: 10px;
-    align-items: center;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.search-input-group-modal {
+/* Keresősáv konténer */
+.search-bar-container {
+    width: 100%;
+}
+
+.search-input-group-enhanced {
     position: relative;
     display: flex;
     align-items: center;
     background: var(--bg-primary);
     border: 2px solid var(--border);
-    border-radius: 10px;
-    padding: 0 14px;
+    border-radius: 12px;
+    padding: 0 16px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    flex: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.search-input-group-modal::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 10px;
-    padding: 2px;
-    background: linear-gradient(135deg, var(--accent), #667eea);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.search-input-group-modal:focus-within::before {
-    opacity: 1;
-}
-
-.search-input-group-modal:focus-within {
+.search-input-group-enhanced:focus-within {
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12), 0 8px 24px rgba(124, 58, 237, 0.15);
-    transform: translateY(-1px);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15), 0 8px 24px rgba(124, 58, 237, 0.2);
+    transform: translateY(-2px);
 }
 
-.search-input-modal {
+.search-icon-enhanced {
+    color: var(--accent);
+    font-size: 1.1rem;
+    margin-right: 12px;
+    transition: all 0.3s ease;
+}
+
+.search-input-group-enhanced:focus-within .search-icon-enhanced {
+    transform: scale(1.1) rotate(15deg);
+    color: var(--accent);
+}
+
+.search-input-enhanced {
     flex: 1;
-    padding: 11px 10px;
+    padding: 14px 10px;
     background: transparent;
     border: none;
     outline: none;
     color: var(--text-primary);
     font-size: 0.95rem;
-    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
-.search-input-modal::placeholder {
+.search-input-enhanced::placeholder {
     color: var(--text-muted);
     font-size: 0.9rem;
-    transition: all 0.3s ease;
 }
 
-.search-input-modal:focus::placeholder {
-    transform: translateX(5px);
-    opacity: 0.7;
-}
-
-/* Inline keresés gomb - továbbfejlesztett animációkkal */
-.inline-search-btn {
-    background: rgba(124, 58, 237, 0.1);
-    color: var(--accent);
-    border: 1px solid rgba(124, 58, 237, 0.3);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+.inline-search-btn-enhanced {
+    background: linear-gradient(135deg, var(--accent), #667eea);
+    color: white;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.95rem;
-    flex-shrink: 0;
-    margin-right: 6px;
-    position: relative;
-    overflow: hidden;
+    margin-right: 8px;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
-.inline-search-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(124, 58, 237, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.5s, height 0.5s;
+.inline-search-btn-enhanced:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
 }
 
-.inline-search-btn:hover:not(:disabled)::before {
-    width: 100px;
-    height: 100px;
+.inline-search-btn-enhanced:active:not(:disabled) {
+    transform: translateY(0) scale(1);
 }
 
-.inline-search-btn:hover:not(:disabled) {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-    transform: translateY(-2px) scale(1.1) rotate(10deg);
-    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
-}
-
-.inline-search-btn:active:not(:disabled) {
-    transform: translateY(0) scale(1) rotate(0deg);
-}
-
-.inline-search-btn:disabled {
-    opacity: 0.5;
+.inline-search-btn-enhanced:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
-/* Keresés betöltő animáció */
-.search-spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(124, 58, 237, 0.2);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
+.clear-search-btn-enhanced {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.clear-search-btn-enhanced:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px) rotate(90deg);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
 }
 
-/* Összes gomb - továbbfejlesztett animációkkal */
-.fetch-all-btn {
-    background: linear-gradient(135deg, var(--accent), #667eea);
+/* Szűrési szekció */
+.filter-section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: var(--bg-primary);
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filter-controls-enhanced {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-group-enhanced {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-label-enhanced {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-select-enhanced {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 40px 12px 14px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 12 12'%3E%3Cpath fill='%237c3aed' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.filter-select-enhanced:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    transform: translateY(-1px);
+}
+
+.filter-select-enhanced:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.filter-select-enhanced option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 10px;
+}
+
+/* Szűrési akciógombok */
+.filter-actions-enhanced {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.apply-filter-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
-    padding: 11px 18px;
+    padding: 12px 24px;
     border-radius: 10px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     white-space: nowrap;
-    flex-shrink: 0;
+    flex: 1;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     position: relative;
     overflow: hidden;
 }
 
-.fetch-all-btn::before {
+.apply-filter-btn::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -1867,99 +2016,130 @@
     transition: width 0.5s, height 0.5s;
 }
 
-.fetch-all-btn:hover:not(:disabled)::before {
-    width: 200px;
-    height: 200px;
+.apply-filter-btn:hover:not(:disabled)::before {
+    width: 300px;
+    height: 300px;
 }
 
-.fetch-all-btn:hover:not(:disabled) {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+.apply-filter-btn:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
 }
 
-.fetch-all-btn:active:not(:disabled) {
+.apply-filter-btn:active:not(:disabled) {
     transform: translateY(-1px) scale(1);
 }
 
-.fetch-all-btn:disabled {
+.apply-filter-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    transform: none;
 }
 
-.fetch-all-btn svg {
-    font-size: 1rem;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.fetch-all-btn:hover:not(:disabled) svg {
-    transform: scale(1.2) rotate(10deg);
-}
-
-.error-message-modal {
-    margin: 0 35px;
-    padding: 14px 18px;
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+.reset-filter-btn {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: white;
+    border: none;
+    padding: 12px 24px;
     border-radius: 10px;
-    color: #ef4444;
     font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     align-items: center;
     gap: 10px;
+    white-space: nowrap;
+    flex: 1;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Responsive keresés a modalban */
-@media (max-width: 768px) {
-    .user-management-search-section {
-        padding: 16px 20px;
-    }
-
-    .search-controls-wrapper {
-        flex-direction: column;
-    }
-
-    .fetch-all-btn {
-        width: 100%;
-        justify-content: center;
-    }
+.reset-filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
 }
 
-/* Extra finomítások */
-.clear-search-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 0.95rem;
+.reset-filter-btn:hover:not(:disabled)::before {
+    width: 300px;
+    height: 300px;
 }
 
-.search-icon {
-    font-size: 1rem;
-    margin-right: 10px;
+.reset-filter-btn:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(100, 116, 139, 0.5);
+    background: linear-gradient(135deg, #475569, #334155);
 }
 
-/* Mobil nézet - kisebb padding */
-@media (max-width: 600px) {
-    .user-management-search-section {
-        padding: 14px 16px;
-    }
+.reset-filter-btn:active:not(:disabled) {
+    transform: translateY(-1px) scale(1);
+}
 
-    .search-input-group-modal {
-        padding: 0 12px;
-    }
+.reset-filter-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
-    .search-input-modal {
-        padding: 10px 8px;
-        font-size: 0.9rem;
-    }
+/* Szűrési opciók */
+.filter-controls-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
 
-    .fetch-all-btn {
-        padding: 10px 16px;
-        font-size: 0.85rem;
-    }
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-    .inline-search-btn {
-        width: 34px;
-        height: 34px;
-        font-size: 1rem;
-    }
+.filter-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.filter-select {
+    background: var(--bg-primary);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 32px 8px 12px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237c3aed' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+.filter-select:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+.filter-select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 8px;
 }
