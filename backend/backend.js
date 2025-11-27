@@ -146,7 +146,7 @@ app.post('/login', (req, res) => {
     const sqlQuery = `
         SELECT felh_id, felh_nev, felh_szerepkor 
         FROM account 
-        WHERE felh_nev = ? AND felh_jelszo = SHA2(?, 256)
+        WHERE felh_nev = ? AND felh_jelszo = SHA2(?, 256) and felh_szerepkor = 'admin'
     `;
 
     pool.query(
@@ -184,26 +184,185 @@ app.post('/login', (req, res) => {
     );
 });
 
-// Felhasználó regisztrálása (felhasználónév, felhasználó jelszó)
+// Felhasználó regisztrálása (felhasználónév, e-mail-cím, felhasználó jelszó 2x, 1 e-mail cím lehet egy felhasználóhoz kötve, ugyanolyan felhasználónév nem szerepelhet többször)
 app.post('/register', (req, res) => {
-    const { felh_nev, jelszo } = req.body;
+    const { felh_nev, email, jelszo1, jelszo2 } = req.body;
+
+    // Ellenőrzés: Jelszavak egyeznek-e?
+    if (jelszo1 !== jelszo2) {
+        return res.status(400).json({ message: 'A jelszavaknak egyezniük kell.' });
+    }
+
+    // Ellenőrzés: Felhasználónév már létezik?
+    pool.query('SELECT * FROM account WHERE felh_nev = ?', [felh_nev], (error, results) => {
+        if (error) {
+            console.error('Hiba a felhasználónév ellenőrzésekor:', error);
+            return res.status(500).json({ error: 'Hiba a felhasználónév ellenőrzésekor' });
+        }
+        if (results.length > 0) {
+            return res.status(400).json({ message: 'Ez a felhasználónév már foglalt.' });
+        }
+
+        // Ellenőrzés: E-mail cím már létezik?
+        pool.query('SELECT * FROM account WHERE email = ?', [email], (error, results) => {
+            if (error) {
+                console.error('Hiba az e-mail cím ellenőrzésekor:', error);
+                return res.status(500).json({ error: 'Hiba az e-mail cím ellenőrzésekor' });
+            }
+            if (results.length > 0) {
+                return res.status(400).json({ message: 'Ez az e-mail cím már regisztrálva van.' });
+            }
+
+            // Új felhasználó regisztrálása
+            pool.query(
+                'INSERT INTO account (felh_nev, email, felh_jelszo, felh_szerepkor) VALUES (?, ?, SHA2(?, 256), ?)',
+                [felh_nev, email, jelszo1, 'user'], // Alapértelmezett szerepkör: 'user'
+                (error, results) => {
+                    if (error) {
+                        console.error('Hiba a felhasználó regisztrálásakor:', error);
+                        res.status(500).json({ error: 'Hiba a felhasználó regisztrálásakor' });
+                    } else {
+                        res.json({ message: 'Felhasználó sikeresen regisztrálva', results });
+                    }
+                }
+            );
+        });
+    });
+});
+
+// Regisztrált összes profil lekérdezése (minden adattal együtt) - csak adminoknak
+app.get('/felhasznalokLekerdezese', authenticateToken, (req, res) => {
+    if (req.user.szerepkor !== 'admin') {
+        return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
+    }
+
+    pool.query('SELECT felh_id, felh_nev, email, felh_szerepkor, regisztracio_datuma FROM account', (error, results) => {
+        if (error) {
+            console.error('Hiba a felhasználók lekérdezésekor:', error);
+            return res.status(500).json({ error: 'Hiba a felhasználók lekérdezésekor' });
+        }
+        res.json(results);
+    });
+});
+
+// kiválasztott profil módosítása - csak adminoknak
+app.put('/felhasznaloModosit/:id', authenticateToken, (req, res) => {
+    if (req.user.szerepkor !== 'admin') {
+        return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
+    }
+    const felh_id_from_url = req.params.id;
+    const { felh_nev, jelszo, email, felh_szerepkor } = req.body;
+    
+    if (jelszo && jelszo.trim() !== '') {
+        pool.query(
+            'UPDATE account SET felh_nev = ?, felh_jelszo = SHA2(?, 256), email = ?, felh_szerepkor = ? WHERE felh_id = ?',
+            [felh_nev, jelszo, email, felh_szerepkor, felh_id_from_url],
+            (error, results) => {
+                if (error) {
+                    console.error('Hiba a felhasználó módosításakor:', error);
+                    return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
+                }
+                res.json({ message: 'Felhasználó adatai módosítva (jelszóval együtt)', results });
+            }
+        );
+    } else {
+        pool.query(
+            'UPDATE account SET felh_nev = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
+            [felh_nev, email, felh_szerepkor, felh_id_from_url],
+            (error, results) => {
+                if (error) {
+                    console.error('Hiba a felhasználó módosításakor:', error);
+                    return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
+                }
+                res.json({ message: 'Felhasználó adatai módosítva (jelszó nélkül)', results });
+            }
+        );
+    }
+});
+
+// regisztrált profil törlése ID alapján - csak adminoknak
+app.delete('/felhasznaloTorles/:id', authenticateToken, (req, res) => {
+    if (req.user.szerepkor !== 'admin') {
+        return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
+    }
+    const felh_id_from_url = req.params.id;
     pool.query(
-        'INSERT INTO account (felh_nev, felh_jelszo, felh_szerepkor) VALUES (?, SHA2(?, 256), ?)',
-        [felh_nev, jelszo, 'user'], // Alapértelmezett szerepkör: 'user'
+        'DELETE FROM account WHERE felh_id = ?',
+        [felh_id_from_url],
         (error, results) => {
             if (error) {
-                console.error('Hiba a felhasználó regisztrálásakor:', error);
-                res.status(500).json({ error: 'Hiba a felhasználó regisztrálásakor' });
-            } else {
-                res.json({ message: 'Felhasználó sikeresen regisztrálva', results });
+                console.error('Hiba a felhasználó törlésekor:', error);
+                return res.status(500).json({ error: 'Hiba a felhasználó törlésekor' });
             }
+            res.json({ message: 'Felhasználó törölve', results });
         }
     );
 });
-// Két játékos kiválasztása állandó
 
+// regisztrált profil keresése felhasználónév (részleges egyezés) VAGY ID  VAGY E-mail-cím alapján - csak adminoknak
+app.get('/felhasznaloKereses/:searchTerm', authenticateToken, (req, res) => {
+    if (req.user.szerepkor !== 'admin') {
+        return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
+    }
+    const searchTerm = req.params.searchTerm;
 
-// FMáté végpontjai
+    const sqlQuery = `
+        SELECT * FROM account
+        WHERE felh_nev LIKE CONCAT('%', ?, '%')
+        OR felh_id = ?
+        OR email LIKE CONCAT('%', ?, '%')
+    `;
+    pool.query(sqlQuery, [searchTerm, searchTerm, searchTerm], (error, results) => {
+        if (error) {
+            console.error('Hiba a felhasználó keresésekor:', error);
+            return res.status(500).json({ error: 'Hiba a felhasználó keresésekor' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Nincs találat a keresési feltételre.' });
+        }
+        res.json(results);
+    });
+});
+// Regisztált profilok közötti szűrőre való keresés - csak adminoknak (Regisztrálás időpontja szerint növekvő/csökkenő, szerepkör szerint növekvő/csökkenő)
+app.get('/felhasznaloSzuro/:filterBy/:order', authenticateToken, (req, res) => {
+    if (req.user.szerepkor !== 'admin') {
+        return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
+    }
+
+    const { filterBy, order } = req.params;
+
+    let validFilterBy;
+    let validOrder;
+
+    if (filterBy === 'regisztracio_ido') {
+        validFilterBy = 'regisztracio_datuma'; 
+    } else if (filterBy === 'szerepkor') {
+        validFilterBy = 'felh_szerepkor'; 
+    } else {
+        return res.status(400).json({ message: 'Érvénytelen szűrési feltétel.' });
+    }
+
+    if (order === 'asc' || order === 'desc') {
+        validOrder = order.toUpperCase();  // ASC vagy DESC
+    } else {
+        return res.status(400).json({ message: 'Érvénytelen rendezési irány.' });
+    }
+
+    const sqlQuery = `
+        SELECT * FROM account
+        ORDER BY ${validFilterBy} ${validOrder}
+    `;
+    pool.query(sqlQuery, (error, results) => {
+        if (error) {
+            console.error('Hiba a felhasználók lekérdezésekor:', error);
+            return res.status(500).json({ error: 'Hiba a felhasználók lekérdezésekor' });
+        }
+        res.json(results);
+    });
+});
+
+// ----- Máté végpontjai vége -----
+// ----- Fekete Máté végpontjai -----
 
 // Foci játékos adat betöltése
 app.get('/focijatekosAdatBetolt', (req, res) => {
@@ -278,6 +437,23 @@ app.get('/focijatekosKereses/:searchTerm', (req, res) => {
     });
 });
 
+// Foci játékos törlése ID alapján
+app.delete('/focijatekosTorles/:id', (req, res) => {
+    const foci_jatekos_id_from_url = req.params.id;
+
+    pool.query(
+        'DELETE FROM foci_jatekos WHERE foci_jatekos_id = ?',
+        [foci_jatekos_id_from_url],
+        (error, results) => {
+            if (error) {
+                console.error('Hiba a foci játékos törlésekor:', error);
+                res.status(500).json({ error: 'Hiba a foci játékos törlésekor' });
+            } else {
+                res.json({ message: 'Foci játékos sikeresen törölve', results });
+            }
+        }
+    );
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

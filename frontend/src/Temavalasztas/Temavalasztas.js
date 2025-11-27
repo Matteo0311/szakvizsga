@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TemavalasztasStyles.css';
 import { IoFootball } from 'react-icons/io5';
 import { FaGlobeEurope, FaMusic } from 'react-icons/fa';
@@ -36,15 +37,24 @@ const themes = [
 
 const Temavalasztas = () => {
     const [selectedTheme, setSelectedTheme] = useState(null);
+    const navigate = useNavigate();
 
     const handleThemeClick = (theme) => {
         setSelectedTheme(theme);
     };
 
     const handleSubthemeClick = (subtheme) => {
-        // Itt lehet navigálni a játék oldalra, pl. react-router-rel
-        // Most csak logoljuk
-        console.log('Játék indítása:', selectedTheme.title, subtheme.title);
+        // Navigálás a játék oldalra
+        if (selectedTheme.title === 'Foci' && subtheme.title === 'FC 26 játékos értékelés') {
+            navigate('/fc26-ertekeles');
+        } else if (selectedTheme.title === 'Foci' && subtheme.title === 'Játékos életkor') {
+            navigate('/jatekos-eletkor');
+        } else if (selectedTheme.title === 'Foci' && subtheme.title === 'Játékos piaci érték') {
+            navigate('/piaci-ertek');
+        } else {
+            console.log('Játék indítása:', selectedTheme.title, subtheme.title);
+            // További játékok itt implementálhatók
+        }
     };
 
     return (

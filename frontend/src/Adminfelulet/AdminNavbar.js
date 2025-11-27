@@ -102,7 +102,18 @@ const AdminNavbar = () => {
           <div className="admin-navbar-actions">
             {isAuthenticated && (
               <div className="admin-user-info">
-                <span className="admin-user-welcome">👋 {user?.nev}</span>
+                <span className="admin-user-welcome">
+                  {user?.szerepkor === 'admin' ? '�' : '👤'} {user?.nev}
+                  {user?.szerepkor === 'admin' && <span style={{ 
+                    marginLeft: '8px', 
+                    fontSize: '0.75rem', 
+                    backgroundColor: '#ffd700', 
+                    color: '#000', 
+                    padding: '2px 8px', 
+                    borderRadius: '12px',
+                    fontWeight: 'bold'
+                  }}>ADMIN</span>}
+                </span>
                 <button className="admin-logout-btn" onClick={handleLogout} title="Kijelentkezés">
                   🚪 Kilépés
                 </button>
