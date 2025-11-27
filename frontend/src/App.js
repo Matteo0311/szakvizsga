@@ -14,7 +14,7 @@ import AdminRoute from './AdminRoute';
 import './App.css';
 import AdminNavbar from './Adminfelulet/AdminNavbar';
 import JatekNavbar from './Jatek/JatekNavbar';
-import FC26Ertekeles from './Jatek/Foci/FC26Ertekeles/FC26Ertekeles';
+import FC26Ertekeles from './Foci/FC26Ertekeles/FC26Ertekeles';
 
 // Navbar komponens, amely feltételesen jelenik meg
 const ConditionalNavbar = () => {

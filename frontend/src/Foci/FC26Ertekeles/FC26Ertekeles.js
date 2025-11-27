@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Cim from '../../../Cim';
+import Cim from '../../Cim';
 import './FC26ErtekelesStyles.css';
 
 const FC26Ertekeles = () => {
