@@ -29,7 +29,6 @@ app.get('/orszagAdatBetolt', (req, res) => {
             res.status(500).json({ error: 'Hiba az adatok betöltésekor' });
         } else {
             res.json(results);
-            res.json(results);
         }
     });
 });
