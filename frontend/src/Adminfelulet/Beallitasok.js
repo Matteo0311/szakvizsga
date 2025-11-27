@@ -37,6 +37,14 @@ const Beallitasok = () => {
         }
     }, []);
 
+    // Automatikus betöltés amikor a modal megnyílik és nincsenek felhasználók
+    useEffect(() => {
+        if (showUserManagement && users.length === 0 && !loading && !error) {
+            fetchUsers();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showUserManagement]);
+
     const fetchUsers = async () => {
         setLoading(true);
         setError(null);
@@ -72,7 +80,6 @@ const Beallitasok = () => {
             
             setUsers(uniqueUsers);
             setCurrentPage(1); // Első oldalra ugrás új adatok betöltésekor
-            setShowUserManagement(true);
         } catch (err) {
             console.error('Fetch error:', err);
             setError(err.message);
@@ -133,7 +140,16 @@ const Beallitasok = () => {
 
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(`${config.API_BASE_URL}/felhasznaloModositJelszóNelkul/${editingUser}`, {
+            // Javított endpoint név - eltávolítva az ékezetes karakterek
+            const url = `${config.API_BASE_URL}/felhasznaloModosit/${editingUser}`;
+            console.log('Módosítási kérés URL:', url);
+            console.log('Módosítási adatok:', {
+                felh_nev: editForm.felhasznalonev,
+                email: editForm.email,
+                felh_szerepkor: editForm.szerepkor
+            });
+            
+            const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -145,10 +161,25 @@ const Beallitasok = () => {
                     felh_szerepkor: editForm.szerepkor
                 })
             });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers.get('content-type'));
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Hiba a felhasználó módosításakor');
+                // Próbáljuk meg JSON-ként parse-olni, ha nem sikerül, használjuk a status text-et
+                let errorMessage = 'Hiba a felhasználó módosításakor';
+                try {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.error || errorMessage;
+                    } else {
+                        errorMessage = `Szerver hiba: ${response.status} ${response.statusText}`;
+                    }
+                } catch (parseError) {
+                    errorMessage = `Szerver hiba: ${response.status} ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
             }
 
             // Frissítjük a listát
@@ -158,6 +189,7 @@ const Beallitasok = () => {
             setEditForm({ felhasznalonev: '', email: '', szerepkor: '' });
             alert('Felhasználó sikeresen módosítva!');
         } catch (err) {
+            console.error('Módosítási hiba:', err);
             alert('Hiba történt: ' + err.message);
         }
     };
@@ -214,8 +246,6 @@ const Beallitasok = () => {
                 setUsers(uniqueUsers);
                 setCurrentPage(1);
             }
-            
-            setShowUserManagement(true);
         } catch (err) {
             console.error('Keresési hiba:', err);
             setError(err.message);
@@ -289,7 +319,7 @@ const Beallitasok = () => {
                                 <p className="settings-description">
                                     {registrationEnabled 
                                         ? '✅ Az új felhasználók regisztrálhatnak adminisztrátori fiókot a /register oldalon.' 
-                                        : '❌ A regisztráció jelenleg le van tiltva. A /register oldal nem érhető el.'}
+                                        : '❌ A regisztráció jelenleg le van tiltva.'}
                                 </p>
                             </div>
                         </div>
@@ -385,52 +415,55 @@ const Beallitasok = () => {
 
                             {/* Keresési és szűrési rész */}
                             <div className="user-management-search-section">
-                                <div className="search-input-group-modal">
-                                    <FaSearch className="search-icon" />
-                                    <input
-                                        type="text"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                                        placeholder="Keresés felhasználónév vagy ID alapján..."
-                                        className="search-input-modal"
-                                    />
-                                    {searchTerm && (
-                                        <button 
-                                            onClick={handleClearSearch}
-                                            className="clear-search-btn"
-                                            title="Törlés"
-                                        >
-                                            <FaTimes />
-                                        </button>
-                                    )}
-                                </div>
-                                <div className="search-buttons-modal">
-                                    <button 
-                                        onClick={handleSearch}
-                                        className="modal-action-btn search-btn-modal"
-                                        disabled={searchLoading || !searchTerm.trim()}
-                                    >
-                                        <FaSearch />
-                                        <span>{searchLoading ? 'Keresés...' : 'Keresés'}</span>
-                                    </button>
+                                <div className="search-controls-wrapper">
+                                    <div className="search-input-group-modal">
+                                        <FaSearch className="search-icon" />
+                                        <input
+                                            type="text"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && searchTerm.trim() && handleSearch()}
+                                            placeholder="Keresés felhasználónév vagy ID alapján..."
+                                            className="search-input-modal"
+                                        />
+                                        {searchTerm && (
+                                            <>
+                                                <button 
+                                                    onClick={handleSearch}
+                                                    className="inline-search-btn"
+                                                    disabled={searchLoading || !searchTerm.trim()}
+                                                    title="Keresés"
+                                                >
+                                                    {searchLoading ? (
+                                                        <div className="search-spinner"></div>
+                                                    ) : (
+                                                        <FaSearch />
+                                                    )}
+                                                </button>
+                                                <button 
+                                                    onClick={() => {
+                                                        handleClearSearch();
+                                                        fetchUsers();
+                                                    }}
+                                                    className="clear-search-btn"
+                                                    title="Törlés és összes megjelenítése"
+                                                >
+                                                    <FaTimes />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
                                     <button 
                                         onClick={fetchUsers} 
-                                        className="modal-action-btn fetch-btn-modal"
+                                        className="fetch-all-btn"
                                         disabled={loading}
+                                        title="Összes felhasználó megjelenítése"
                                     >
                                         <FaUsers />
-                                        <span>{loading ? 'Betöltés...' : 'Összes megjelenítése'}</span>
+                                        <span>{loading ? 'Betöltés...' : 'Összes'}</span>
                                     </button>
                                 </div>
                             </div>
-
-                            {/* Hiba üzenet */}
-                            {error && (
-                                <div className="error-message-modal">
-                                    ❌ {error}
-                                </div>
-                            )}
 
                             <div className="users-grid-container">
                                 {users.length === 0 ? (
@@ -438,8 +471,17 @@ const Beallitasok = () => {
                                         <div className="no-users-icon">
                                             <FaInbox size={80} />
                                         </div>
-                                        <h3>Nincs regisztrált felhasználó</h3>
-                                        <p>Még nem található felhasználó az adatbázisban</p>
+                                        {error ? (
+                                            <>
+                                                <h3>❌ {error}</h3>
+                                                <p>Próbáld meg újra vagy módosítsd a keresési feltételt</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <h3>Nincs regisztrált felhasználó</h3>
+                                                <p>Még nem található felhasználó az adatbázisban</p>
+                                            </>
+                                        )}
                                     </div>
                                 ) : (
                                     <>
