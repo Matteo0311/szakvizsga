@@ -11,6 +11,8 @@ const FociJatekModosit=({kivalasztott})=>{
         const [keresesSzoveg, setKeresesSzoveg] = useState('')
         const [keresesEredmeny, setKeresesEredmeny] = useState([])
         const [keresEsben, setKeresEsben] = useState(false)
+        const [jelenlegiOldal, setJelenlegiOldal] = useState(1)
+        const [oldalMeret] = useState(20)
         const [modositandoJatekos, setModositandoJatekos] = useState({
                 foci_jatekos_id: '',
                 foci_jatekos_nev: '',
@@ -79,6 +81,7 @@ const FociJatekModosit=({kivalasztott})=>{
         const keresesInputValtozas = (e) => {
                 const value = e.target.value;
                 setKeresesSzoveg(value);
+                setJelenlegiOldal(1); // Reset to first page on search
                 clearTimeout(window.searchTimeout);
                 window.searchTimeout = setTimeout(() => {
                         keresesVegrehajtas(value);
@@ -88,10 +91,33 @@ const FociJatekModosit=({kivalasztott})=>{
         const keresesTorles = () => {
                 setKeresesSzoveg('');
                 setKeresesEredmeny([]);
+                setJelenlegiOldal(1); // Reset to first page
                 clearTimeout(window.searchTimeout);
         };
 
         const megjelenitoAdatok = keresesSzoveg.trim() ? keresesEredmeny : adatok;
+
+        // Pagination számítások
+        const osszesOldal = Math.ceil(megjelenitoAdatok.length / oldalMeret);
+        const kezdoIndex = (jelenlegiOldal - 1) * oldalMeret;
+        const vegIndex = kezdoIndex + oldalMeret;
+        const jelenlegiJatekosok = megjelenitoAdatok.slice(kezdoIndex, vegIndex);
+
+        const kovetkezoOldal = () => {
+                if (jelenlegiOldal < osszesOldal) {
+                        setJelenlegiOldal(jelenlegiOldal + 1);
+                }
+        };
+
+        const elozoOldal = () => {
+                if (jelenlegiOldal > 1) {
+                        setJelenlegiOldal(jelenlegiOldal - 1);
+                }
+        };
+
+        const ugrasoldalra = (oldalSzam) => {
+                setJelenlegiOldal(oldalSzam);
+        };
 
         // Új játék hozzáadása
         const UjJatekosFeluletMegnyitas = () => {
@@ -379,30 +405,87 @@ const FociJatekModosit=({kivalasztott})=>{
                                                     <th>Piaci érték</th>
                                                     <th>Életkor</th>
                                                     <th>Műveletek</th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            {megjelenitoAdatok.length > 0 ? (
-                                                    megjelenitoAdatok.map((elem,index)=>(
-                                                        <tr key={elem.foci_jatekos_id || index} className="adat-sor">
-                                                                <td>{keresesSzoveg.trim() ? elem.foci_jatekos_id : index + 1}</td>
-                                                                <td className="orszag-nev">{elem.foci_jatekos_nev}</td>
-                                                                <td className="szam-adat">{elem.foci_jatekos_ertekeles ?? '-'}</td>
-                                                                <td className="szam-adat">{formatMillio(elem.foci_jatekos_piaci_ertek)}</td>
-                                                                <td className="szam-adat">{elem.foci_jatekos_eletkor ?? '-'}</td>
-                                                                <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
-                                                        </tr>
-                                                    ))
-                                            ) : (
-                                                    <tr>
-                                                        <td colSpan="6" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
-                                                                {keresesSzoveg.trim() ? 'Nincs találat a keresési feltételre' : 'Nincs megjeleníthető adat'}
-                                                        </td>
-                                                    </tr>
-                                            )}
-                                          </tbody>
+                                            </tr>                          </thead>
+                          <tbody>
+                            {jelenlegiJatekosok.length > 0 ? (
+                                    jelenlegiJatekosok.map((elem,index)=>(
+                                        <tr key={elem.foci_jatekos_id || index} className="adat-sor">
+                                                <td>{keresesSzoveg.trim() ? elem.foci_jatekos_id : kezdoIndex + index + 1}</td>
+                                                <td className="orszag-nev">{elem.foci_jatekos_nev}</td>
+                                                <td className="szam-adat">{elem.foci_jatekos_ertekeles ?? '-'}</td>
+                                                <td className="szam-adat">{formatMillio(elem.foci_jatekos_piaci_ertek)}</td>
+                                                <td className="szam-adat">{elem.foci_jatekos_eletkor ?? '-'}</td>
+                                                <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
+                                        </tr>
+                                    ))
+                            ) : (
+                                    <tr>
+                                        <td colSpan="6" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+                                                {keresesSzoveg.trim() ? 'Nincs találat a keresési feltételre' : 'Nincs megjeleníthető adat'}
+                                        </td>
+                                    </tr>
+                            )}
+                          </tbody>
                           </table>
                         </div>
+
+                        {osszesOldal > 1 && (
+                                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                                        <button 
+                                                className="admin-button" 
+                                                onClick={elozoOldal} 
+                                                disabled={jelenlegiOldal === 1}
+                                                style={{ opacity: jelenlegiOldal === 1 ? 0.5 : 1 }}
+                                        >
+                                                ← Előző
+                                        </button>
+                                        
+                                        <div style={{ display: 'flex', gap: '5px' }}>
+                                                {[...Array(osszesOldal)].map((_, index) => {
+                                                        const oldalSzam = index + 1;
+                                                        // Show first page, last page, current page, and pages around current
+                                                        if (
+                                                                oldalSzam === 1 || 
+                                                                oldalSzam === osszesOldal || 
+                                                                (oldalSzam >= jelenlegiOldal - 1 && oldalSzam <= jelenlegiOldal + 1)
+                                                        ) {
+                                                                return (
+                                                                        <button
+                                                                                key={oldalSzam}
+                                                                                className="admin-button"
+                                                                                onClick={() => ugrasoldalra(oldalSzam)}
+                                                                                style={{
+                                                                                        backgroundColor: jelenlegiOldal === oldalSzam ? '#0066cc' : '#28a745',
+                                                                                        minWidth: '40px'
+                                                                                }}
+                                                                        >
+                                                                                {oldalSzam}
+                                                                        </button>
+                                                                );
+                                                        } else if (
+                                                                oldalSzam === jelenlegiOldal - 2 || 
+                                                                oldalSzam === jelenlegiOldal + 2
+                                                        ) {
+                                                                return <span key={oldalSzam} style={{ padding: '0 5px' }}>...</span>;
+                                                        }
+                                                        return null;
+                                                })}
+                                        </div>
+
+                                        <button 
+                                                className="admin-button" 
+                                                onClick={kovetkezoOldal} 
+                                                disabled={jelenlegiOldal === osszesOldal}
+                                                style={{ opacity: jelenlegiOldal === osszesOldal ? 0.5 : 1 }}
+                                        >
+                                                Következő →
+                                        </button>
+                                        
+                                        <span style={{ marginLeft: '15px', color: '#666' }}>
+                                                {jelenlegiOldal}. oldal / {osszesOldal}
+                                        </span>
+                                </div>
+                        )}
 
                         <div style={{ marginTop: '20px', textAlign: 'center' }}>
                           <button className="admin-button" onClick={() => window.history.back()}>Visszatérés az adminfelületre</button>
