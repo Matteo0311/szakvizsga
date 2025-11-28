@@ -4,6 +4,7 @@ const port = 3000
 const mysql = require('mysql')
 const cors = require('cors')
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const JWT_SECRET = 'A_TE_SZAKDOLGOZAT_TITKOS_KULCSOD';
 
 app.use(cors())
@@ -11,7 +12,7 @@ app.use(cors())
 app.use(express.json())
 
 const pool = mysql.createPool({
-    host: 'localhost:3306',
+    host: 'localhost',
     user: 'root',
     password: '',
     database: 'higherorlower'
@@ -138,56 +139,49 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// 2. Bejelentkezési Végpont (TOKEN GENERÁLÁSA)
+// 2. Bejelentkezési Végpont (TOKEN GENERÁLÁSA) - minden felhasználónak (admin és user)
 app.post('/login', (req, res) => {
-    const { felh_nev, jelszo } = req.body; 
-
-    // SHA256-alapú hitelesítés az adatbázisban
-    const sqlQuery = `
-        SELECT felh_id, felh_nev, felh_szerepkor 
-        FROM account 
-        WHERE felh_nev = ? AND felh_jelszo = SHA2(?, 256) and felh_szerepkor = 'admin'
-    `;
-
+    const { felh_nev, jelszo } = req.body;
     pool.query(
-        sqlQuery,
-        [felh_nev, jelszo], 
+        'SELECT felh_id, felh_nev, felh_szerepkor, felh_jelszo FROM account WHERE felh_nev = ?',
+        [felh_nev],
         (error, results) => {
             if (error) {
                 console.error('Adatbázis hiba a bejelentkezéskor:', error);
                 return res.status(500).json({ error: 'Adatbázis hiba.' });
             }
-
             if (results.length === 0) {
                 return res.status(401).json({ message: 'Hibás felhasználónév vagy jelszó' });
             }
-
             const user = results[0];
-            
-            // Sikeres bejelentkezés: JWT token generálása
-            const token = jwt.sign(
-                { 
-                    id: user.felh_id, 
-                    nev: user.felh_nev,
-                    szerepkor: user.felh_szerepkor 
-                }, 
-                JWT_SECRET,
-                { expiresIn: '1h' } // Token 1 óra múlva lejár
-            );
-
-            res.json({ 
-                message: 'Sikeres bejelentkezés', 
-                token: token,
-                szerepkor: user.felh_szerepkor
+            // bcrypt összehasonlítás
+            bcrypt.compare(jelszo, user.felh_jelszo, (err, isMatch) => {
+                if (err || !isMatch) {
+                    return res.status(401).json({ message: 'Hibás felhasználónév vagy jelszó' });
+                }
+                // Sikeres bejelentkezés: JWT token generálása
+                const token = jwt.sign(
+                    {
+                        id: user.felh_id,
+                        nev: user.felh_nev,
+                        szerepkor: user.felh_szerepkor
+                    },
+                    JWT_SECRET,
+                    { expiresIn: '1h' }
+                );
+                res.json({
+                    message: 'Sikeres bejelentkezés',
+                    token: token,
+                    szerepkor: user.felh_szerepkor
+                });
             });
         }
     );
 });
 
-// Felhasználó regisztrálása (felhasználónév, e-mail-cím, felhasználó jelszó 2x, 1 e-mail cím lehet egy felhasználóhoz kötve, ugyanolyan felhasználónév nem szerepelhet többször)
+// Felhasználó regisztrálása (bcrypt hash!)
 app.post('/register', (req, res) => {
     const { felh_nev, email, jelszo1, jelszo2 } = req.body;
-
     // Ellenőrzés: Jelszavak egyeznek-e?
     if (jelszo1 !== jelszo2) {
         return res.status(400).json({ message: 'A jelszavaknak egyezniük kell.' });
@@ -213,19 +207,25 @@ app.post('/register', (req, res) => {
                 return res.status(400).json({ message: 'Ez az e-mail cím már regisztrálva van.' });
             }
 
-            // Új felhasználó regisztrálása
-            pool.query(
-                'INSERT INTO account (felh_nev, email, felh_jelszo, felh_szerepkor) VALUES (?, ?, SHA2(?, 256), ?)',
-                [felh_nev, email, jelszo1, 'user'], // Alapértelmezett szerepkör: 'user'
-                (error, results) => {
-                    if (error) {
-                        console.error('Hiba a felhasználó regisztrálásakor:', error);
-                        res.status(500).json({ error: 'Hiba a felhasználó regisztrálásakor' });
-                    } else {
-                        res.json({ message: 'Felhasználó sikeresen regisztrálva', results });
-                    }
+            // Jelszó hash-elése bcrypt-tel
+            bcrypt.hash(jelszo1, 10, (err, hash) => {
+                if (err) {
+                    console.error('Hiba a jelszó hash-elésekor:', err);
+                    return res.status(500).json({ error: 'Hiba a jelszó hash-elésekor' });
                 }
-            );
+                // Új felhasználó regisztrálása
+                pool.query(
+                    'INSERT INTO account (felh_nev, email, felh_jelszo, felh_szerepkor) VALUES (?, ?, ?, ?)',
+                    [felh_nev, email, hash, 'user'], // Alapértelmezett szerepkör: 'user'
+                    (error, results) => {
+                        if (error) {
+                            console.error('Hiba a regisztrációnál:', error);
+                            return res.status(500).json({ error: 'Hiba a regisztrációnál' });
+                        }
+                        res.json({ message: 'Sikeres regisztráció!' });
+                    }
+                );
+            });
         });
     });
 });
@@ -254,17 +254,24 @@ app.put('/felhasznaloModosit/:id', authenticateToken, (req, res) => {
     const { felh_nev, jelszo, email, felh_szerepkor } = req.body;
     
     if (jelszo && jelszo.trim() !== '') {
-        pool.query(
-            'UPDATE account SET felh_nev = ?, felh_jelszo = SHA2(?, 256), email = ?, felh_szerepkor = ? WHERE felh_id = ?',
-            [felh_nev, jelszo, email, felh_szerepkor, felh_id_from_url],
-            (error, results) => {
-                if (error) {
-                    console.error('Hiba a felhasználó módosításakor:', error);
-                    return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
-                }
-                res.json({ message: 'Felhasználó adatai módosítva (jelszóval együtt)', results });
+        // Jelszó hash-elése bcrypt-tel
+        bcrypt.hash(jelszo, 10, (err, hash) => {
+            if (err) {
+                console.error('Hiba a jelszó hash-elésekor:', err);
+                return res.status(500).json({ error: 'Hiba a jelszó hash-elésekor' });
             }
-        );
+            pool.query(
+                'UPDATE account SET felh_nev = ?, felh_jelszo = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
+                [felh_nev, hash, email, felh_szerepkor, felh_id_from_url],
+                (error, results) => {
+                    if (error) {
+                        console.error('Hiba a felhasználó módosításakor:', error);
+                        return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
+                    }
+                    res.json({ message: 'Felhasználó adatai módosítva (jelszóval együtt)', results });
+                }
+            );
+        });
     } else {
         pool.query(
             'UPDATE account SET felh_nev = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
@@ -307,7 +314,7 @@ app.get('/felhasznaloKereses/:searchTerm', authenticateToken, (req, res) => {
     const searchTerm = req.params.searchTerm;
 
     const sqlQuery = `
-        SELECT * FROM account
+        SELECT felh_id, felh_nev, email, felh_szerepkor, regisztracio_datuma FROM account
         WHERE felh_nev LIKE CONCAT('%', ?, '%')
         OR felh_id = ?
         OR email LIKE CONCAT('%', ?, '%')
@@ -349,7 +356,7 @@ app.get('/felhasznaloSzuro/:filterBy/:order', authenticateToken, (req, res) => {
     }
 
     const sqlQuery = `
-        SELECT * FROM account
+        SELECT felh_id, felh_nev, email, felh_szerepkor, regisztracio_datuma FROM account
         ORDER BY ${validFilterBy} ${validOrder}
     `;
     pool.query(sqlQuery, (error, results) => {
@@ -359,6 +366,66 @@ app.get('/felhasznaloSzuro/:filterBy/:order', authenticateToken, (req, res) => {
         }
         res.json(results);
     });
+});
+
+// regisztrált profil saját adatainak lekérdezése (token alapján)
+app.get('/sajatFelhAdatok', authenticateToken, (req, res) => {
+    const felh_id = req.user.id;
+    pool.query(
+        'SELECT felh_id, felh_nev, email, felh_szerepkor, regisztracio_datuma FROM account WHERE felh_id = ?',
+        [felh_id],
+        (error, results) => {
+            if (error) {
+                console.error('Hiba a saját adatok lekérdezésekor:', error);
+                return res.status(500).json({ error: 'Hiba a saját adatok lekérdezésekor' });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Nincs találat a saját adatokra.' });
+            }
+            res.json(results[0]);
+        }
+    );
+});
+
+// regisztrált profil saját adatainak módosítása (token alapján) - a profil módosításához meg kell adnia a jelszavát!
+app.put('/sajatFelhModosit', authenticateToken, (req, res) => {
+    const felh_id = req.user.id;
+    const { felh_nev, jelszo, email } = req.body;
+    // Jelszó hash-elése bcrypt-tel
+    bcrypt.hash(jelszo, 10, (err, hash) => {
+        if (err) {
+            console.error('Hiba a jelszó hash-elésekor:', err);
+            return res.status(500).json({ error: 'Hiba a jelszó hash-elésekor' });
+        }
+        pool.query(
+            'UPDATE account SET felh_nev = ?, felh_jelszo = ?, email = ? WHERE felh_id = ?',
+            [felh_nev, hash, email, felh_id],
+            (error, results) => {
+                if (error) {
+                    console.error('Hiba a saját adatok módosításakor:', error);
+                    return res.status(500).json({ error: 'Hiba a saját adatok módosításakor' });
+                }
+                res.json({ message: 'Sikeresen módosítva', results });
+            });
+        }
+    );
+});
+
+// regisztrált profil saját profiljának törlése (token alapján) - adatbázisból az összes adatával való törlése
+app.delete('/sajatFelhTorles', authenticateToken, (req, res) => {
+    const felh_id = req.user.id;
+
+    pool.query(
+        'DELETE FROM account WHERE felh_id = ?',
+        [felh_id],
+        (error, results) => {
+            if (error) {
+                console.error('Hiba a felhasználó törlésekor:', error);
+                return res.status(500).json({ error: 'Hiba a felhasználó törlésekor' });
+            }
+            res.json({ message: 'Sikeresen törölve', results });
+        }
+    );
 });
 
 // ----- Máté végpontjai vége -----
@@ -453,6 +520,11 @@ app.delete('/focijatekosTorles/:id', (req, res) => {
             }
         }
     );
+});
+
+// Példa védett admin végpontra:
+app.get('/admin/dashboard', authenticateToken, (req, res) => {
+    res.json({ message: 'Admin dashboard elérve.' });
 });
 
 app.listen(port, () => {

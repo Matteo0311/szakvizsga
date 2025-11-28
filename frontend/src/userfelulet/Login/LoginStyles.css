@@ -1,0 +1,93 @@
+/* Modern, minimalista, informatív stílus regisztrációhoz és bejelentkezéshez */
+
+.user-register-container, .user-login-container {
+  max-width: 400px;
+  margin: 48px auto;
+  padding: 2.5rem 2rem 2rem 2rem;
+  background: #f9fafe;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(30, 34, 90, 0.10);
+  transition: box-shadow 0.2s;
+}
+.user-register-container:hover, .user-login-container:hover {
+  box-shadow: 0 8px 32px 0 rgba(30, 34, 90, 0.18);
+}
+
+.modern-form h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  color: #222b45;
+  letter-spacing: 0.5px;
+}
+.input-group {
+  margin-bottom: 1.3rem;
+  position: relative;
+}
+.input-group input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid #e0e7ef;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1rem;
+  transition: border 0.2s;
+  outline: none;
+}
+.input-group input:focus {
+  border: 1.5px solid #1976d2;
+  background: #f0f6ff;
+}
+.modern-btn {
+  width: 100%;
+  padding: 0.95rem;
+  background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.08rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(25, 118, 210, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.modern-btn:disabled {
+  background: #b0bec5;
+  cursor: not-allowed;
+}
+.error-message {
+  color: #d32f2f;
+  background: #fff0f0;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin-top: 1.1rem;
+  text-align: center;
+  font-size: 1rem;
+}
+.success-message {
+  color: #388e3c;
+  background: #e8f5e9;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin-top: 1.1rem;
+  text-align: center;
+  font-size: 1rem;
+}
+.form-footer {
+  margin-top: 2rem;
+  text-align: center;
+  color: #6b7a99;
+  font-size: 0.98rem;
+}
+.form-link {
+  color: #1976d2;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 0.3rem;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.form-link:hover {
+  color: #00bcd4;
+}

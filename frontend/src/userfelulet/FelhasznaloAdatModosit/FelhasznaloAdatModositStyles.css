@@ -1,0 +1,161 @@
+.adatmodosit-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 2rem;
+  background: #181818 !important;
+  color: #f5f5f5 !important;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.adatmodosit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.adatmodosit-form label {
+  font-weight: 500;
+  color: #f5f5f5 !important;
+}
+.adatmodosit-form input {
+  padding: 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  margin-top: 0.3rem;
+  background: #232323 !important;
+  color: #f5f5f5 !important;
+}
+button[type="submit"] {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+.delete-btn {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1.5rem;
+}
+.success-msg {
+  color: #66bb6a;
+  margin-top: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+.error-msg {
+  color: #ef5350;
+  margin-top: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Modern modal és input dizájn, sötét téma támogatással */
+.adatmodosit-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.adatmodosit-modal-content {
+  background: #232323;
+  color: #f5f5f5;
+  border-radius: 14px;
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  min-width: 320px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  align-items: stretch;
+}
+.adatmodosit-modal-content h3 {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.adatmodosit-modal-content input {
+  padding: 0.6rem;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  background: #181818;
+  color: #f5f5f5;
+}
+.modal-btns {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+.modal-save-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.modal-save-btn:hover {
+  background: #1251a3;
+}
+.modal-cancel-btn {
+  background: #333;
+  color: #f5f5f5;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.modal-cancel-btn:hover {
+  background: #444;
+}
+.edit-icon {
+  color: #90caf9 !important;
+  transition: color 0.2s;
+}
+.edit-icon:hover {
+  color: #42a5f5 !important;
+}
+
+/* Sötét input placeholder */
+.adatmodosit-container input::placeholder,
+.adatmodosit-modal-content input::placeholder {
+  color: #b0b0b0;
+  opacity: 1;
+}
+
+/* Sötét téma fix: minden háttér és szöveg sötét, minden mást felülír! */
+.adatmodosit-container {
+  background: #181818 !important;
+  color: #f5f5f5 !important;
+  /* ...egyéb meglévő stílusok... */
+}
+.adatmodosit-container label {
+  color: #f5f5f5 !important;
+}
+.adatmodosit-container input[disabled],
+.adatmodosit-row input {
+  background: #232323 !important;
+  color: #f5f5f5 !important;
+  border: 1px solid #333 !important;
+}
+.adatmodosit-row label {
+  color: #f5f5f5 !important;
+}

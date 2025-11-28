@@ -95,6 +95,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Új: Token alapú bejelentkezés (userLogin komponenshez)
+  const loginWithToken = (token, szerepkor) => {
+    localStorage.setItem('authToken', token);
+    setIsAuthenticated(true);
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    setUser({
+      id: payload.id,
+      nev: payload.nev,
+      szerepkor: payload.szerepkor || szerepkor
+    });
+  };
+
   const logout = () => {
     localStorage.removeItem('authToken');
     setIsAuthenticated(false);
@@ -105,6 +117,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     user,
     login,
+    loginWithToken, // új
     logout,
     loading
   };

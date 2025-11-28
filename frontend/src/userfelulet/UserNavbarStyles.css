@@ -1,0 +1,22 @@
+nav {
+  background: #1976d2;
+  padding: 1rem;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+}
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+nav button {
+  background: #fff;
+  color: #1976d2;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}

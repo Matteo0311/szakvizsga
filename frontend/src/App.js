@@ -1,6 +1,6 @@
 import Adminfelulet from './Adminfelulet/Adminfelulet';
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import OrszagModosit from './Adminfelulet/OrszagModosit';
 import FociJatekModosit from './Adminfelulet/FociJatekModosit';
 import Beallitasok from './Adminfelulet/Beallitasok';
@@ -17,22 +17,21 @@ import JatekNavbar from './Jatek/JatekNavbar';
 import FC26Ertekeles from './Foci/FC26Ertekeles/FC26Ertekeles';
 import JatekosEletkor from './Foci/JatekosEletkor/JatekosEletkor';
 import Piaci_Ertek from './Foci/Piaci_Ertek/Piaci_Ertek';
+import UserLogin from './userfelulet/Login/Login';
+import UserRegister from './userfelulet/Register/Register';
+import UserProfile from './userfelulet/UserProfile';
+import UserNavbar from './userfelulet/UserNavbar';
+import UserProtectedRoute from './userfelulet/UserProtectedRoute';
+import FelhasznaloAdatModosit from './userfelulet/FelhasznaloAdatModosit/FelhasznaloAdatModosit';
 
 // Navbar komponens, amely feltételesen jelenik meg
-const ConditionalNavbar = () => {
-  const location = useLocation();
-  const adminPaths = ['/adminfelulet', '/orszagmodosit', '/focijatekmodosit', '/beallitasok', '/login', '/register', '/backend-test'];
-  const isAdminPath = adminPaths.includes(location.pathname);
-  
-  return isAdminPath ? <AdminNavbar /> : <JatekNavbar />;
-};
+const ConditionalNavbar = () => null;
 
 function App() {
   return (
     <div className="App">
       <AuthProvider>
         <Router>
-          <ConditionalNavbar />
           <div className="main-content">
             <Routes>
               <Route path="/" element={<Temavalasztas />} />
@@ -45,9 +44,9 @@ function App() {
               <Route 
                 path="/adminfelulet" 
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <Adminfelulet />
-                  </ProtectedRoute>
+                  </AdminRoute>
                 } 
               />
               <Route 
@@ -81,6 +80,24 @@ function App() {
                     <BackendTest />
                   </ProtectedRoute>
                 } 
+              />
+              <Route path="/user/login" element={<UserLogin />} />
+              <Route path="/user/register" element={<UserRegister />} />
+              <Route 
+                path="/user/profile" 
+                element={
+                  <UserProtectedRoute>
+                    <UserProfile />
+                  </UserProtectedRoute>
+                }
+              />
+              <Route 
+                path="/user/adatmodositas" 
+                element={
+                  <UserProtectedRoute>
+                    <FelhasznaloAdatModosit />
+                  </UserProtectedRoute>
+                }
               />
             </Routes>
           </div>

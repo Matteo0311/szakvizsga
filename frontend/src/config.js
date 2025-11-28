@@ -6,6 +6,8 @@ const config = {
   // API végpontok
   endpoints: {
     login: '/login',
+    userLogin: '/userLogin',
+    register: '/register',
     // További végpontok itt adhatók hozzá
   }
 };
