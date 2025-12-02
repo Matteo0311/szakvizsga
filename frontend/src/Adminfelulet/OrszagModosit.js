@@ -1,6 +1,7 @@
 import "./AdminStyles.css"
 import { useState,useEffect } from "react"
 import Cim from "../Cim"
+import Swal from 'sweetalert2'
 
 const OrszagModosit=({kivalasztott})=>{
     const [adatok,setAdatok]=useState([])
@@ -137,7 +138,12 @@ const OrszagModosit=({kivalasztott})=>{
     const UjOrszagHozzaadas = async () => {
         if (!ujOrszag.orszag_nev || !ujOrszag.orszag_nepesseg || 
             !ujOrszag.orszag_nagysag || !ujOrszag.orszag_gdp) {
-            alert('Kérlek töltsd ki az összes mezőt!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Hiányzó adatok',
+                text: 'Kérlek töltsd ki az összes mezőt!',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
@@ -157,16 +163,31 @@ const OrszagModosit=({kivalasztott})=>{
 
             if (response.ok) {
                 const result = await response.json();
-                alert('Új ország sikeresen hozzáadva!');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sikeres hozzáadás',
+                    text: 'Új ország sikeresen hozzáadva!',
+                    confirmButtonText: 'OK'
+                });
                 UjOrszagFeluletBezaras();
                 leToltes();
             } else {
                 const error = await response.json();
-                alert(`Hiba történt: ${error.error}`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hiba',
+                    text: `Hiba történt: ${error.error}`,
+                    confirmButtonText: 'OK'
+                });
             }
         } catch (error) {
             console.error('Hiba történt az ország hozzáadása során:', error);
-            alert('Hiba történt az ország hozzáadása során!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Hiba',
+                text: 'Hiba történt az ország hozzáadása során!',
+                confirmButtonText: 'OK'
+            });
         }
     };
 
@@ -205,7 +226,12 @@ const OrszagModosit=({kivalasztott})=>{
     const OrszagModositas = async () => {
         if (!modositandoOrszag.orszag_nev || !modositandoOrszag.orszag_nepesseg || 
             !modositandoOrszag.orszag_nagysag || !modositandoOrszag.orszag_gdp) {
-            alert('Kérlek töltsd ki az összes mezőt!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Hiányzó adatok',
+                text: 'Kérlek töltsd ki az összes mezőt!',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
@@ -231,16 +257,31 @@ const OrszagModosit=({kivalasztott})=>{
 
             if (response.ok) {
                 const result = await response.json();
-                alert('Az ország adatai sikeresen módosítva!');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sikeres módosítás',
+                    text: 'Az ország adatai sikeresen módosítva!',
+                    confirmButtonText: 'OK'
+                });
                 ModositasFeluletBezaras();
                 leToltes();
             } else {
                 const error = await response.json();
-                alert(`Hiba történt: ${error.error}`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hiba',
+                    text: `Hiba történt: ${error.error}`,
+                    confirmButtonText: 'OK'
+                });
             }
         } catch (error) {
             console.error('Hiba történt a módosítás során:', error);
-            alert('Hiba történt a módosítás során!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Hiba',
+                text: 'Hiba történt a módosítás során!',
+                confirmButtonText: 'OK'
+            });
         }
     };
 

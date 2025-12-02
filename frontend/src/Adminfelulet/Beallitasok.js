@@ -4,6 +4,7 @@ import { useAuth } from '../AuthContext';
 import './BeallitasokStyles.css';
 import config from '../config';
 import { FaUsers, FaUser, FaCrown, FaEnvelope, FaIdCard, FaCalendarAlt, FaEdit, FaTrash, FaCheck, FaTimes, FaInbox, FaSearch } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const Beallitasok = () => {
     const { user } = useAuth();
@@ -130,9 +131,19 @@ const Beallitasok = () => {
 
             // Frissítjük a listát
             await fetchUsers();
-            alert('Felhasználó sikeresen törölve!');
+            Swal.fire({
+                icon: 'success',
+                title: 'Sikeres törlés',
+                text: 'Felhasználó sikeresen törölve!',
+                confirmButtonText: 'OK'
+            });
         } catch (err) {
-            alert('Hiba történt: ' + err.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hiba',
+                text: 'Hiba történt: ' + err.message,
+                confirmButtonText: 'OK'
+            });
         }
     };
 
@@ -155,7 +166,12 @@ const Beallitasok = () => {
 
     const handleUpdateUser = async () => {
         if (!editForm.felhasznalonev || !editForm.email) {
-            alert('Felhasználónév és email megadása kötelező!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Hiányzó adatok',
+                text: 'Felhasználónév és email megadása kötelező!',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
@@ -208,10 +224,20 @@ const Beallitasok = () => {
             setShowEditModal(false);
             setEditingUser(null);
             setEditForm({ felhasznalonev: '', email: '', szerepkor: '' });
-            alert('Felhasználó sikeresen módosítva!');
+            Swal.fire({
+                icon: 'success',
+                title: 'Sikeres módosítás',
+                text: 'Felhasználó sikeresen módosítva!',
+                confirmButtonText: 'OK'
+            });
         } catch (err) {
             console.error('Módosítási hiba:', err);
-            alert('Hiba történt: ' + err.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hiba',
+                text: 'Hiba történt: ' + err.message,
+                confirmButtonText: 'OK'
+            });
         }
     };
 
@@ -223,7 +249,12 @@ const Beallitasok = () => {
 
     const handleSearch = async () => {
         if (!searchTerm.trim()) {
-            alert('Kérlek adj meg keresési kifejezést!');
+            Swal.fire({
+                icon: 'info',
+                title: 'Üres keresés',
+                text: 'Kérlek adj meg keresési kifejezést!',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
