@@ -814,7 +814,7 @@ const Beallitasok = () => {
                 <div className="settings-actions">
                     <Link to="/adminfelulet" className="back-button">
                         <span className="back-icon">←</span>
-                        <span>Vissza az adminfelületre</span>
+                        <span>Vissza</span>
                     </Link>
                 </div>
             </div>

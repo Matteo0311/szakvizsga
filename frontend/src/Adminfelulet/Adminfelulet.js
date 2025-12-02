@@ -113,13 +113,6 @@ const Adminfelulet = () => {
                         </p>
                     </div>
                 )}
-
-                <div className="admin-actions">
-                    <Link to="/" className="back-button">
-                        <span className="back-icon">←</span>
-                        <span>Vissza a főoldalra</span>
-                    </Link>
-                </div>
             </div>
         </div>
     );
