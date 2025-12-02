@@ -4,9 +4,11 @@ import { useAuth } from '../../AuthContext';
 import UserSidebar from '../UserSidebar';
 import config from '../../config';
 import { FaEdit } from '../UserProfileIcons';
+import { useNavigate } from 'react-router-dom';
 
 const FelhasznaloAdatModosit = () => {
   const { token, logout } = useAuth();
+  const navigate = useNavigate();
   const [felhNev, setFelhNev] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -52,6 +54,7 @@ const FelhasznaloAdatModosit = () => {
       if (response.ok) {
         setMessage(data.message || 'Profil törölve!');
         logout();
+        navigate('/'); // Azonnali átirányítás a kezdőlapra
       } else {
         setError(data.error || data.message || 'Hiba történt!');
       }
