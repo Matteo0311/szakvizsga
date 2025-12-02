@@ -246,55 +246,108 @@ app.get('/felhasznalokLekerdezese', authenticateToken, (req, res) => {
 });
 
 // kiválasztott profil módosítása - csak adminoknak
-app.put('/felhasznaloModosit/:id', authenticateToken, (req, res) => {
+app.put('/felhasznaloModosit/:id', authenticateToken, async (req, res) => {
     if (req.user.szerepkor !== 'admin') {
         return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
     }
     const felh_id_from_url = req.params.id;
     const { felh_nev, jelszo, email, felh_szerepkor } = req.body;
-    
-    if (jelszo && jelszo.trim() !== '') {
-        // Jelszó hash-elése bcrypt-tel
-        bcrypt.hash(jelszo, 10, (err, hash) => {
-            if (err) {
-                console.error('Hiba a jelszó hash-elésekor:', err);
-                return res.status(500).json({ error: 'Hiba a jelszó hash-elésekor' });
+
+    try {
+        // Lekérjük az aktuális adatokat
+        const [currentUser] = await new Promise((resolve, reject) => {
+            pool.query('SELECT felh_nev, email, felh_szerepkor, felh_jelszo FROM account WHERE felh_id = ?', [felh_id_from_url], (error, results) => {
+                if (error) return reject(error);
+                resolve(results);
+            });
+        });
+        if (!currentUser) {
+            return res.status(404).json({ message: 'Felhasználó nem található.' });
+        }
+        // Ha bármelyik mezőnél az új érték megegyezik a régivel, ne engedje a módosítást
+        if (currentUser.felh_nev === felh_nev) {
+            return res.status(400).json({ message: 'A felhasználónév nem változott, módosítás nem engedélyezett.' });
+        }
+        if (currentUser.email === email) {
+            return res.status(400).json({ message: 'Az e-mail cím nem változott, módosítás nem engedélyezett.' });
+        }
+        if (currentUser.felh_szerepkor === felh_szerepkor) {
+            return res.status(400).json({ message: 'A szerepkör nem változott, módosítás nem engedélyezett.' });
+        }
+        if (jelszo && jelszo.trim() !== '') {
+            // Jelszó hash összehasonlítás
+            const bcryptMatch = await bcrypt.compare(jelszo, currentUser.felh_jelszo);
+            if (bcryptMatch) {
+                return res.status(400).json({ message: 'A jelszó nem változott, módosítás nem engedélyezett.' });
             }
+        }
+
+        // Ellenőrzés: van-e másik felhasználó ugyanazzal a névvel vagy e-maillel (kivéve saját magát)
+        const [userByName] = await new Promise((resolve, reject) => {
+            pool.query('SELECT * FROM account WHERE felh_nev = ? AND felh_id != ?', [felh_nev, felh_id_from_url], (error, results) => {
+                if (error) return reject(error);
+                resolve(results);
+            });
+        });
+        if (userByName) {
+            return res.status(400).json({ message: 'Ez a felhasználónév már foglalt.' });
+        }
+        const [userByEmail] = await new Promise((resolve, reject) => {
+            pool.query('SELECT * FROM account WHERE email = ? AND felh_id != ?', [email, felh_id_from_url], (error, results) => {
+                if (error) return reject(error);
+                resolve(results);
+            });
+        });
+        if (userByEmail) {
+            return res.status(400).json({ message: 'Ez az e-mail cím már regisztrálva van.' });
+        }
+
+        if (jelszo && jelszo.trim() !== '') {
+            // Jelszó hash-elése bcrypt-tel
+            bcrypt.hash(jelszo, 10, (err, hash) => {
+                if (err) {
+                    console.error('Hiba a jelszó hash-elésekor:', err);
+                    return res.status(500).json({ error: 'Hiba a jelszó hash-elésekor' });
+                }
+                pool.query(
+                    'UPDATE account SET felh_nev = ?, felh_jelszo = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
+                    [felh_nev, hash, email, felh_szerepkor, felh_id_from_url],
+                    (error, results) => {
+                        if (error) {
+                            console.error('Hiba a felhasználó módosításakor:', error);
+                            return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
+                        }
+                        res.json({ message: 'Felhasználó adatai módosítva (jelszóval együtt)', results });
+                    }
+                );
+            });
+        } else {
             pool.query(
-                'UPDATE account SET felh_nev = ?, felh_jelszo = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
-                [felh_nev, hash, email, felh_szerepkor, felh_id_from_url],
+                'UPDATE account SET felh_nev = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
+                [felh_nev, email, felh_szerepkor, felh_id_from_url],
                 (error, results) => {
                     if (error) {
                         console.error('Hiba a felhasználó módosításakor:', error);
                         return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
                     }
-                    res.json({ message: 'Felhasználó adatai módosítva (jelszóval együtt)', results });
+                    res.json({ message: 'Felhasználó adatai módosítva (jelszó nélkül)', results });
                 }
             );
-        });
-    } else {
-        pool.query(
-            'UPDATE account SET felh_nev = ?, email = ?, felh_szerepkor = ? WHERE felh_id = ?',
-            [felh_nev, email, felh_szerepkor, felh_id_from_url],
-            (error, results) => {
-                if (error) {
-                    console.error('Hiba a felhasználó módosításakor:', error);
-                    return res.status(500).json({ error: 'Hiba a felhasználó módosításakor' });
-                }
-                res.json({ message: 'Felhasználó adatai módosítva (jelszó nélkül)', results });
-            }
-        );
+        }
+    } catch (error) {
+        console.error('Felhasználó módosítási hiba:', error);
+        return res.status(500).json({ error: 'Hiba a felhasználó módosításánál' });
     }
 });
 
-// regisztrált profil törlése ID alapján - csak adminoknak
+// regisztrált profil törlése ID alapján - csak adminoknak (ADMIN PROFILOK NEM TÖRÖLHETŐEK)
 app.delete('/felhasznaloTorles/:id', authenticateToken, (req, res) => {
     if (req.user.szerepkor !== 'admin') {
         return res.status(403).json({ message: 'Hozzáférés megtagadva. Csak adminok számára.' });
     }
     const felh_id_from_url = req.params.id;
     pool.query(
-        'DELETE FROM account WHERE felh_id = ?',
+        'DELETE FROM account WHERE felh_id = ? AND felh_szerepkor <> "admin"',
         [felh_id_from_url],
         (error, results) => {
             if (error) {
