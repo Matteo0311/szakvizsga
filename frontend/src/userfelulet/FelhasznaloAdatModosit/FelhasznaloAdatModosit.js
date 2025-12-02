@@ -42,10 +42,9 @@ const FelhasznaloAdatModosit = () => {
     setError('');
     if (!window.confirm('Biztosan törölni szeretné a profilját? Ez nem visszavonható!')) return;
     try {
-      const response = await fetch('/sajatFelhTorles', {
+      const response = await fetch(`${config.API_BASE_URL}/sajatFelhTorles`, {
         method: 'DELETE',
-        headers:
-         {
+        headers: {
           'Authorization': `Bearer ${token}`
         }
       });
@@ -65,7 +64,6 @@ const FelhasznaloAdatModosit = () => {
   const handleNevModosit = async () => {
     setMessage(''); setError('');
     if (!modalInput.nev) { setError('Adj meg új nevet!'); return; }
-    if (!modalInput.regiJelszo) { setError('Add meg a jelenlegi jelszavad!'); return; }
     try {
       const response = await fetch(`${config.API_BASE_URL}/sajatFelhModosit`, {
         method: 'PUT',
@@ -73,11 +71,7 @@ const FelhasznaloAdatModosit = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          felh_nev: modalInput.nev,
-          jelszo: modalInput.regiJelszo,
-          email: email // email nem változik
-        })
+        body: JSON.stringify({ felh_nev: modalInput.nev })
       });
       const data = await response.json();
       if (response.ok) {
@@ -96,7 +90,6 @@ const FelhasznaloAdatModosit = () => {
     setMessage(''); setError('');
     if (!modalInput.email || !modalInput.emailUjra) { setError('Add meg kétszer az új email címet!'); return; }
     if (modalInput.email !== modalInput.emailUjra) { setError('Az email címek nem egyeznek!'); return; }
-    if (!modalInput.regiJelszo) { setError('Add meg a jelenlegi jelszavad!'); return; }
     try {
       const response = await fetch(`${config.API_BASE_URL}/sajatFelhModosit`, {
         method: 'PUT',
@@ -104,11 +97,7 @@ const FelhasznaloAdatModosit = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          felh_nev: felhNev, // név nem változik
-          jelszo: modalInput.regiJelszo,
-          email: modalInput.email
-        })
+        body: JSON.stringify({ email: modalInput.email })
       });
       const data = await response.json();
       if (response.ok) {
@@ -127,17 +116,18 @@ const FelhasznaloAdatModosit = () => {
     setMessage(''); setError('');
     if (!modalInput.regiJelszo || !modalInput.ujJelszo || !modalInput.ujJelszoUjra) { setError('Tölts ki minden mezőt!'); return; }
     if (modalInput.ujJelszo !== modalInput.ujJelszoUjra) { setError('Az új jelszavak nem egyeznek!'); return; }
+    if (modalInput.ujJelszo.length < 6) { setError('A jelszó legalább 6 karakter legyen!'); return; }
     try {
-      const response = await fetch(`${config.API_BASE_URL}/sajatFelhModosit`, {
+      const response = await fetch(`${config.API_BASE_URL}/sajatJelszoModosit`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          felh_nev: felhNev,
-          jelszo: modalInput.ujJelszo,
-          email: email
+          regi_jelszo: modalInput.regiJelszo,
+          uj_jelszo: modalInput.ujJelszo,
+          uj_jelszo_ismet: modalInput.ujJelszoUjra
         })
       });
       const data = await response.json();

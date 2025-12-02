@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
 
   // Ellenőrzi, hogy van-e érvényes token a localStorage-ban
   useEffect(() => {
@@ -30,12 +31,17 @@ export const AuthProvider = ({ children }) => {
             nev: payload.nev,
             szerepkor: payload.szerepkor
           });
+          setToken(token);
         } else {
           localStorage.removeItem('authToken');
+          setToken(null);
         }
       } catch (error) {
         localStorage.removeItem('authToken');
+        setToken(null);
       }
+    } else {
+      setToken(null);
     }
     setLoading(false);
   }, []);
@@ -68,6 +74,7 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem('authToken', data.token);
       setIsAuthenticated(true);
+      setToken(data.token);
       
       // Token dekódolása a felhasználói adatok kinyeréséhez
       const payload = JSON.parse(atob(data.token.split('.')[1]));
@@ -99,6 +106,7 @@ export const AuthProvider = ({ children }) => {
   const loginWithToken = (token, szerepkor) => {
     localStorage.setItem('authToken', token);
     setIsAuthenticated(true);
+    setToken(token);
     const payload = JSON.parse(atob(token.split('.')[1]));
     setUser({
       id: payload.id,
@@ -111,11 +119,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('authToken');
     setIsAuthenticated(false);
     setUser(null);
+    setToken(null);
   };
 
   const value = {
     isAuthenticated,
     user,
+    token,
     login,
     loginWithToken, // új
     logout,
