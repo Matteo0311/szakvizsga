@@ -149,26 +149,33 @@ const FelhasznaloAdatModosit = () => {
   return (
     <>
       <UserSidebar />
-      <div className="adatmodosit-container" style={{ marginLeft: 120, minWidth: 400, maxWidth: 480, boxShadow: '0 4px 24px rgba(0,0,0,0.15)', background: '#fff', borderRadius: 16, padding: '2.5rem 2rem', marginTop: 48 }}>
-        <h2 style={{textAlign: 'center', marginBottom: 32}}>Adatmódosítás</h2>
-        <div className="adatmodosit-row" style={{display: 'flex', alignItems: 'center', marginBottom: 24}}>
-          <label style={{flex: 1, fontWeight: 500}}>Felhasználónév</label>
-          <input type="text" value={felhNev} disabled style={{flex: 2, marginRight: 12, background: '#f5f5f5', border: '1px solid #ddd', borderRadius: 6, padding: '0.5rem'}} />
-          <span className="edit-icon" style={{cursor: 'pointer', color: '#1976d2', fontSize: 22}} onClick={() => setModal('nev')}><FaEdit /></span>
+      <div className="adatmodosit-kozepre">
+        <div className="adatmodosit-container">
+          <h2 className="adatmodosit-title">Adatmódosítás</h2>
+          <div className="adatmodosit-row">
+            <label>Felhasználónév</label>
+            <input type="text" value={felhNev} disabled />
+            <span className="edit-icon" onClick={() => setModal('nev')}><FaEdit /></span>
+          </div>
+          <div className="adatmodosit-row">
+            <label>Email</label>
+            <input type="email" value={email} disabled />
+            <span className="edit-icon" onClick={() => setModal('email')}><FaEdit /></span>
+          </div>
+          <div className="adatmodosit-row">
+            <label>Jelszó</label>
+            <input type="password" value={"********"} disabled />
+            <span className="edit-icon" onClick={() => setModal('jelszo')}><FaEdit /></span>
+          </div>
+
+          {message && <div className="success-msg">{message}</div>}
+          {error && <div className="error-msg">{error}</div>}
+
+          <div className="adatmodosit-delete-section">
+            <div className="delete-warning">⚠️ A profil törlése végleges, és minden adat elveszik!</div>
+            <button className="delete-btn" onClick={handleDelete}>Profil törlése</button>
+          </div>
         </div>
-        <div className="adatmodosit-row" style={{display: 'flex', alignItems: 'center', marginBottom: 24}}>
-          <label style={{flex: 1, fontWeight: 500}}>Email</label>
-          <input type="email" value={email} disabled style={{flex: 2, marginRight: 12, background: '#f5f5f5', border: '1px solid #ddd', borderRadius: 6, padding: '0.5rem'}} />
-          <span className="edit-icon" style={{cursor: 'pointer', color: '#1976d2', fontSize: 22}} onClick={() => setModal('email')}><FaEdit /></span>
-        </div>
-        <div className="adatmodosit-row" style={{display: 'flex', alignItems: 'center', marginBottom: 32}}>
-          <label style={{flex: 1, fontWeight: 500}}>Jelszó</label>
-          <input type="password" value={"********"} disabled style={{flex: 2, marginRight: 12, background: '#f5f5f5', border: '1px solid #ddd', borderRadius: 6, padding: '0.5rem'}} />
-          <span className="edit-icon" style={{cursor: 'pointer', color: '#1976d2', fontSize: 22}} onClick={() => setModal('jelszo')}><FaEdit /></span>
-        </div>
-        <button className="delete-btn" onClick={handleDelete} style={{marginTop: 24, width: 180, marginLeft: 'auto', marginRight: 'auto', display: 'block'}}>Profil törlése</button>
-        {message && <div className="success-msg">{message}</div>}
-        {error && <div className="error-msg">{error}</div>}
       </div>
 
       {/* MODALOK */}

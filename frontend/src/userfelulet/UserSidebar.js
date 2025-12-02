@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUser, FaChartBar, FaCog, FaSignOutAlt, FaEdit } from './UserProfileIcons';
+import { FaUser, FaChartBar, FaCog, FaSignOutAlt } from './UserProfileIcons';
 import './UserSidebarStyles.css';
 import { useAuth } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -15,10 +15,9 @@ const UserSidebar = () => {
 
   return (
     <div className="user-sidebar">
-      <div className="user-sidebar-icon active" title="Profil"><FaUser /></div>
+      <div className="user-sidebar-icon active" title="Profil" onClick={() => navigate('/user/profile')}><FaUser /></div>
       <div className="user-sidebar-icon" title="Statisztika"><FaChartBar /></div>
-      <div className="user-sidebar-icon" title="Beállítások"><FaCog /></div>
-      <div className="user-sidebar-icon" title="Adatmódosítás" onClick={() => navigate('/user/adatmodositas')}><FaEdit /></div>
+      <div className="user-sidebar-icon" title="Beállítások" onClick={() => navigate('/user/adatmodositas')}><FaCog /></div>
       <div style={{ flex: 1 }} />
       <div className="user-sidebar-icon" title="Kijelentkezés" onClick={handleLogout} style={{marginBottom: 24, cursor: 'pointer', background: '#222', color: '#fff'}}>
         <FaSignOutAlt />
