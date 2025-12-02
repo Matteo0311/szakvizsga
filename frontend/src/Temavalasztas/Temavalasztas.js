@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './TemavalasztasStyles.css';
 import { IoFootball } from 'react-icons/io5';
 import { FaGlobeEurope, FaMusic } from 'react-icons/fa';
@@ -38,6 +38,17 @@ const themes = [
 const Temavalasztas = () => {
     const [selectedTheme, setSelectedTheme] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Ha van state a location-ben, akkor automatikusan kiválasztjuk a témát
+    useEffect(() => {
+        if (location.state && location.state.selectedTheme) {
+            const theme = themes.find(t => t.title === location.state.selectedTheme);
+            if (theme) {
+                setSelectedTheme(theme);
+            }
+        }
+    }, [location.state]);
 
     const handleThemeClick = (theme) => {
         setSelectedTheme(theme);

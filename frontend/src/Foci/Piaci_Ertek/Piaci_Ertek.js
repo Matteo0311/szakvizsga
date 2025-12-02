@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Cim from '../../Cim';
 import './Piaci_ErtekStyles.css';
 
 const Piaci_Ertek = () => {
+    const navigate = useNavigate();
     const [jatekosok, setJatekosok] = useState([]);
     const [aktualisJatekos, setAktualisJatekos] = useState(null);
     const [kovetkezoJatekos, setKovetkezoJatekos] = useState(null);
@@ -171,6 +173,9 @@ const Piaci_Ertek = () => {
 
     return (
         <div className="piaci-container">
+            <button className="back-button" onClick={() => navigate('/temavalasztas', { state: { selectedTheme: 'Foci' } })}>
+                <span className="back-arrow">←</span> Vissza
+            </button>
             <div className="game-header">
                 <h1>Higher or Lower - Piaci Érték</h1>
                 <div className="score-board">
