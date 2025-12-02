@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../../config';
-import './RegisterStyles.css';
+import './AuthUnifiedStyles.css';
 
 const UserRegister = () => {
   const [formData, setFormData] = useState({
@@ -72,36 +72,27 @@ const UserRegister = () => {
 
   if (success) {
     return (
-      <div className="register-container">
-        <div className="register-background">
-          <div className="register-shape register-shape-1"></div>
-          <div className="register-shape register-shape-2"></div>
-        </div>
-        <div className="register-card success-card">
-          <div className="success-icon">✅</div>
-          <h1>Sikeres regisztráció!</h1>
-          <p>Átirányítás a bejelentkezési oldalra...</p>
+      <div className="user-auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <div className="auth-icon">✅</div>
+            <div className="auth-title">Sikeres regisztráció!</div>
+            <div className="auth-desc">Átirányítás a bejelentkezési oldalra...</div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="register-container">
-      <div className="register-background">
-        <div className="register-shape register-shape-1"></div>
-        <div className="register-shape register-shape-2"></div>
-        <div className="register-shape register-shape-3"></div>
-      </div>
-      <div className="register-card">
-        <div className="register-header">
-          <div className="register-icon">
-            <span>👤</span>
-          </div>
-          <h1>Új fiók regisztrálása</h1>
-          <p>Hozz létre egy felhasználói fiókot</p>
+    <div className="user-auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="auth-icon">👤</div>
+          <div className="auth-title">Új fiók regisztrálása</div>
+          <div className="auth-desc">Hozz létre egy felhasználói fiókot</div>
         </div>
-        <form onSubmit={handleSubmit} className="register-form">
+        <form onSubmit={handleSubmit} className="auth-form">
           {error && (
             <div className="error-message">
               <span className="error-icon">⚠️</span>
@@ -165,7 +156,7 @@ const UserRegister = () => {
           </div>
           <button 
             type="submit" 
-            className="register-btn"
+            className="auth-btn"
             disabled={loading}
           >
             {loading ? (
@@ -181,12 +172,12 @@ const UserRegister = () => {
             )}
           </button>
         </form>
-        <div className="register-footer">
+        <div className="auth-footer">
           <p>
             Már van fiókod? 
             <button 
               type="button" 
-              className="link-btn" 
+              className="auth-link" 
               onClick={() => navigate('/user/login')}
             >
               Bejelentkezés
