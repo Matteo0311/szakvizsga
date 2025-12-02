@@ -809,15 +809,13 @@ const Beallitasok = () => {
                         </div>
                     </div>
                 )}
-
-                {/* Navigáció */}
-                <div className="settings-actions">
-                    <Link to="/adminfelulet" className="back-button">
-                        <span className="back-icon">←</span>
-                        <span>Vissza</span>
-                    </Link>
-                </div>
             </div>
+            
+            {/* Fix Visszalépés gomb - mindig látható az oldal alján középen */}
+            <Link to="/adminfelulet" className="fixed-back-button">
+                <span className="back-icon">←</span>
+                <span>Vissza az adminfelületre</span>
+            </Link>
         </div>
     );
 };
