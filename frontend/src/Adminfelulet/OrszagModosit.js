@@ -461,24 +461,24 @@ const OrszagModosit=({kivalasztott})=>{
               <table className="adat-tablazat">
                   <thead>
                       <tr>
-                        <th className="index-column">#</th>
-                          <th>Ország</th>
-                          <th>Népessége</th>
-                          <th>Nagysága (km²)</th>
-                          <th>GDP (millió $)</th>
-                          <th>Műveletek</th>
+                        <th className="index-column" style={{textAlign: 'center'}}>#</th>
+                          <th style={{textAlign: 'left'}}>Ország</th>
+                          <th style={{textAlign: 'right'}}>Népessége</th>
+                          <th style={{textAlign: 'right'}}>Nagysága (km²)</th>
+                          <th style={{textAlign: 'right'}}>GDP (millió $)</th>
+                          <th style={{textAlign: 'center'}}>Műveletek</th>
                       </tr>
                   </thead>
                   <tbody>
                       {megjelenitoAdatok.length > 0 ? (
                         megjelenitoAdatok.map((elem,index)=>(
                             <tr key={elem.orszag_id} className="adat-sor">
-                                <td>{keresesSzoveg.trim() ? elem.orszag_id : index + 1}</td>
-                                <td className="orszag-nev">{elem.orszag_nev}</td>
-                                <td className="szam-adat">{elem.orszag_nepesseg.toLocaleString()} fő</td>
-                                <td className="szam-adat">{elem.orszag_nagysag.toLocaleString()} km²</td>
-                                <td className="szam-adat">{elem.orszag_gdp.toLocaleString()} M$</td>
-                                <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
+                                <td style={{textAlign: 'center'}}>{keresesSzoveg.trim() ? elem.orszag_id : index + 1}</td>
+                                <td className="orszag-nev" style={{textAlign: 'left'}}>{elem.orszag_nev}</td>
+                                <td className="szam-adat" style={{textAlign: 'right'}}>{elem.orszag_nepesseg.toLocaleString()} fő</td>
+                                <td className="szam-adat" style={{textAlign: 'right'}}>{elem.orszag_nagysag.toLocaleString()} km²</td>
+                                <td className="szam-adat" style={{textAlign: 'right'}}>{elem.orszag_gdp.toLocaleString()} M$</td>
+                                <td style={{textAlign: 'center'}}><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
                             </tr>
                         ))
                       ) : (
