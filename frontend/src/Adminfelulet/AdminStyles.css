@@ -94,6 +94,21 @@
     font-size: 14px;
     color: var(--text-primary);
     background-color: transparent;
+    display: table;
+}
+
+.adat-tablazat thead {
+    display: table-header-group;
+    vertical-align: middle;
+}
+
+.adat-tablazat tbody {
+    display: table-row-group;
+    vertical-align: middle;
+}
+
+.adat-tablazat tr {
+    display: table-row;
 }
 
 .adat-tablazat th {
@@ -106,6 +121,11 @@
     border-top: 1px solid var(--border);
     font-size: 13px;
     letter-spacing: 0.5px;
+    display: table-cell !important;
+    vertical-align: middle;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .adat-tablazat td {
@@ -113,6 +133,7 @@
     border-bottom: 1px solid var(--border-light);
     vertical-align: middle;
     color: var(--text-secondary);
+    display: table-cell !important;
 }
 
 .index-column {
