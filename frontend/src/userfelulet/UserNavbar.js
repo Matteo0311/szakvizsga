@@ -20,6 +20,10 @@ const UserNavbar = () => {
         <span style={{ marginRight: 16 }}>{user?.nev}</span>
         <button onClick={handleLogout} style={{ background: '#fff', color: '#1976d2', border: 'none', borderRadius: 4, padding: '0.5rem 1rem', cursor: 'pointer', fontWeight: 'bold' }}>Kijelentkezés</button>
       </div>
+            <div>
+        <span style={{ marginRight: 16 }}>{user?.nev}</span>
+        <button onClick={handleLogout} style={{ background: '#fff', color: '#1976d2', border: 'none', borderRadius: 4, padding: '0.5rem 1rem', cursor: 'pointer', fontWeight: 'bold' }}>Vissza a főoldalra</button>
+      </div>
     </nav>
   );
 };

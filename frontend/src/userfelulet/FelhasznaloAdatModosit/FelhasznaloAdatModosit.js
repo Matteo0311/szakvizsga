@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import './FelhasznaloAdatModositStyles.css';
 import { useAuth } from '../../AuthContext';
 import UserSidebar from '../UserSidebar';
@@ -11,8 +12,6 @@ const FelhasznaloAdatModosit = () => {
   const navigate = useNavigate();
   const [felhNev, setFelhNev] = useState('');
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
   const [modal, setModal] = useState(null); // 'nev' | 'email' | 'jelszo' | null
   const [modalInput, setModalInput] = useState({
     nev: '',
@@ -40,9 +39,20 @@ const FelhasznaloAdatModosit = () => {
   }, [token]);
 
   const handleDelete = async () => {
-    setMessage('');
-    setError('');
-    if (!window.confirm('Biztosan törölni szeretné a profilját? Ez nem visszavonható!')) return;
+    const result = await Swal.fire({
+      title: 'Profil törlése',
+      html: '<p>Biztosan törölni szeretné a profilját?</p><p style="color: #ff6b6b; font-weight: bold;">Ez nem visszavonható!</p>',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d32f2f',
+      cancelButtonColor: '#757575',
+      confirmButtonText: 'Igen, törlöm!',
+      cancelButtonText: 'Mégse',
+      reverseButtons: true
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       const response = await fetch(`${config.API_BASE_URL}/sajatFelhTorles`, {
         method: 'DELETE',
@@ -52,21 +62,47 @@ const FelhasznaloAdatModosit = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setMessage(data.message || 'Profil törölve!');
+        await Swal.fire({
+          title: 'Sikeres!',
+          text: data.message || 'Profil sikeresen törölve!',
+          icon: 'success',
+          confirmButtonColor: '#4caf50',
+          confirmButtonText: 'OK'
+        });
         logout();
-        navigate('/'); // Azonnali átirányítás a kezdőlapra
+        navigate('/');
       } else {
-        setError(data.error || data.message || 'Hiba történt!');
+        await Swal.fire({
+          title: 'Hiba!',
+          text: data.error || data.message || 'Hiba történt a profil törlése során!',
+          icon: 'error',
+          confirmButtonColor: '#d32f2f',
+          confirmButtonText: 'OK'
+        });
       }
     } catch (err) {
-      setError('Hálózati hiba!');
+      await Swal.fire({
+        title: 'Hálózati hiba!',
+        text: 'Nem sikerült csatlakozni a szerverhez.',
+        icon: 'error',
+        confirmButtonColor: '#d32f2f',
+        confirmButtonText: 'OK'
+      });
     }
   };
 
   // MODAL HANDLEREK
   const handleNevModosit = async () => {
-    setMessage(''); setError('');
-    if (!modalInput.nev) { setError('Adj meg új nevet!'); return; }
+    if (!modalInput.nev) { 
+      await Swal.fire({
+        title: 'Hibaüzenet',
+        text: 'Adj meg új nevet!',
+        icon: 'warning',
+        confirmButtonColor: '#ff9800',
+        confirmButtonText: 'OK'
+      });
+      return; 
+    }
     try {
       const response = await fetch(`${config.API_BASE_URL}/sajatFelhModosit`, {
         method: 'PUT',
@@ -79,20 +115,55 @@ const FelhasznaloAdatModosit = () => {
       const data = await response.json();
       if (response.ok) {
         setFelhNev(modalInput.nev);
-        setMessage('Felhasználónév sikeresen módosítva!');
+        await Swal.fire({
+          title: 'Sikeres!',
+          text: 'Felhasználónév sikeresen módosítva!',
+          icon: 'success',
+          confirmButtonColor: '#4caf50',
+          confirmButtonText: 'OK'
+        });
         setModal(null);
         setModalInput({nev:'',email:'',emailUjra:'',regiJelszo:'',ujJelszo:'',ujJelszoUjra:''});
       } else {
-        setError(data.error || data.message || 'Hiba történt!');
+        await Swal.fire({
+          title: 'Hiba!',
+          text: data.error || data.message || 'Hiba történt!',
+          icon: 'error',
+          confirmButtonColor: '#d32f2f',
+          confirmButtonText: 'OK'
+        });
       }
     } catch (e) {
-      setError('Hálózati hiba!');
+      await Swal.fire({
+        title: 'Hálózati hiba!',
+        text: 'Nem sikerült csatlakozni a szerverhez.',
+        icon: 'error',
+        confirmButtonColor: '#d32f2f',
+        confirmButtonText: 'OK'
+      });
     }
   };
   const handleEmailModosit = async () => {
-    setMessage(''); setError('');
-    if (!modalInput.email || !modalInput.emailUjra) { setError('Add meg kétszer az új email címet!'); return; }
-    if (modalInput.email !== modalInput.emailUjra) { setError('Az email címek nem egyeznek!'); return; }
+    if (!modalInput.email || !modalInput.emailUjra) { 
+      await Swal.fire({
+        title: 'Hibaüzenet',
+        text: 'Add meg kétszer az új email címet!',
+        icon: 'warning',
+        confirmButtonColor: '#ff9800',
+        confirmButtonText: 'OK'
+      });
+      return; 
+    }
+    if (modalInput.email !== modalInput.emailUjra) { 
+      await Swal.fire({
+        title: 'Hibaüzenet',
+        text: 'Az email címek nem egyeznek!',
+        icon: 'warning',
+        confirmButtonColor: '#ff9800',
+        confirmButtonText: 'OK'
+      });
+      return; 
+    }
     try {
       const response = await fetch(`${config.API_BASE_URL}/sajatFelhModosit`, {
         method: 'PUT',
@@ -105,21 +176,65 @@ const FelhasznaloAdatModosit = () => {
       const data = await response.json();
       if (response.ok) {
         setEmail(modalInput.email);
-        setMessage('Email sikeresen módosítva!');
+        await Swal.fire({
+          title: 'Sikeres!',
+          text: 'Email sikeresen módosítva!',
+          icon: 'success',
+          confirmButtonColor: '#4caf50',
+          confirmButtonText: 'OK'
+        });
         setModal(null);
         setModalInput({nev:'',email:'',emailUjra:'',regiJelszo:'',ujJelszo:'',ujJelszoUjra:''});
       } else {
-        setError(data.error || data.message || 'Hiba történt!');
+        await Swal.fire({
+          title: 'Hiba!',
+          text: data.error || data.message || 'Hiba történt!',
+          icon: 'error',
+          confirmButtonColor: '#d32f2f',
+          confirmButtonText: 'OK'
+        });
       }
     } catch (e) {
-      setError('Hálózati hiba!');
+      await Swal.fire({
+        title: 'Hálózati hiba!',
+        text: 'Nem sikerült csatlakozni a szerverhez.',
+        icon: 'error',
+        confirmButtonColor: '#d32f2f',
+        confirmButtonText: 'OK'
+      });
     }
   };
   const handleJelszoModosit = async () => {
-    setMessage(''); setError('');
-    if (!modalInput.regiJelszo || !modalInput.ujJelszo || !modalInput.ujJelszoUjra) { setError('Tölts ki minden mezőt!'); return; }
-    if (modalInput.ujJelszo !== modalInput.ujJelszoUjra) { setError('Az új jelszavak nem egyeznek!'); return; }
-    if (modalInput.ujJelszo.length < 6) { setError('A jelszó legalább 6 karakter legyen!'); return; }
+    if (!modalInput.regiJelszo || !modalInput.ujJelszo || !modalInput.ujJelszoUjra) { 
+      await Swal.fire({
+        title: 'Hibaüzenet',
+        text: 'Tölts ki minden mezőt!',
+        icon: 'warning',
+        confirmButtonColor: '#ff9800',
+        confirmButtonText: 'OK'
+      });
+      return; 
+    }
+    if (modalInput.ujJelszo !== modalInput.ujJelszoUjra) { 
+      await Swal.fire({
+        title: 'Hibaüzenet',
+        text: 'Az új jelszavak nem egyeznek!',
+        icon: 'warning',
+        confirmButtonColor: '#ff9800',
+        confirmButtonText: 'OK'
+      });
+      return; 
+    }
+    if (modalInput.ujJelszo.length < 6) { 
+      await Swal.fire({
+        title: 'Hibaüzenet',
+        text: 'A jelszó legalább 6 karakter legyen!',
+        icon: 'warning',
+        confirmButtonColor: '#ff9800',
+        confirmButtonText: 'OK'
+      });
+      return; 
+    }
     try {
       const response = await fetch(`${config.API_BASE_URL}/sajatJelszoModosit`, {
         method: 'PUT',
@@ -135,14 +250,32 @@ const FelhasznaloAdatModosit = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setMessage('Jelszó sikeresen módosítva!');
+        await Swal.fire({
+          title: 'Sikeres!',
+          text: 'Jelszó sikeresen módosítva!',
+          icon: 'success',
+          confirmButtonColor: '#4caf50',
+          confirmButtonText: 'OK'
+        });
         setModal(null);
         setModalInput({nev:'',email:'',emailUjra:'',regiJelszo:'',ujJelszo:'',ujJelszoUjra:''});
       } else {
-        setError(data.error || data.message || 'Hiba történt!');
+        await Swal.fire({
+          title: 'Hiba!',
+          text: data.error || data.message || 'Hiba történt!',
+          icon: 'error',
+          confirmButtonColor: '#d32f2f',
+          confirmButtonText: 'OK'
+        });
       }
     } catch (e) {
-      setError('Hálózati hiba!');
+      await Swal.fire({
+        title: 'Hálózati hiba!',
+        text: 'Nem sikerült csatlakozni a szerverhez.',
+        icon: 'error',
+        confirmButtonColor: '#d32f2f',
+        confirmButtonText: 'OK'
+      });
     }
   };
 
@@ -167,9 +300,6 @@ const FelhasznaloAdatModosit = () => {
             <input type="password" value={"********"} disabled />
             <span className="edit-icon" onClick={() => setModal('jelszo')}><FaEdit /></span>
           </div>
-
-          {message && <div className="success-msg">{message}</div>}
-          {error && <div className="error-msg">{error}</div>}
 
           <div className="adatmodosit-delete-section">
             <div className="delete-warning">⚠️ A profil törlése végleges, és minden adat elveszik!</div>
