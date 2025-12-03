@@ -34,17 +34,17 @@ const UserSidebar = () => {
   return (
     <div className="user-sidebar">
       <div className="user-sidebar-icon active" title="Profil" onClick={() => navigate('/user/profile')}><FaUser /></div>
-      <div className="user-sidebar-icon" title="Statisztika"><FaChartBar inactive/></div>
+      {/* <div className="user-sidebar-icon" title="Statisztika"><FaChartBar/></div> */}
       <div className="user-sidebar-icon" title="Beállítások" onClick={() => navigate('/user/adatmodositas')}><FaCog /></div>
       <div style={{ flex: 1 }} />
       
       {/* Admin gomb - csak adminoknak látható */}
       {isAdmin && (
-        <div 
-          className="user-sidebar-icon" 
-          title="Belépés az adminfelületbe" 
-          onClick={handleAdminAccess} 
-          style={{marginBottom: 24, cursor: 'pointer', background: '#222', color: 'yellow', border: '1px solid yellow'}}
+        <div
+          className="user-sidebar-icon"
+          title="Belépés az adminfelületbe"
+          onClick={handleAdminAccess}
+          style={{ marginBottom: 24, cursor: 'pointer', background: '#222', color: 'yellow', border: '1px solid yellow' }}
         >
           <FaCrown />
         </div>
