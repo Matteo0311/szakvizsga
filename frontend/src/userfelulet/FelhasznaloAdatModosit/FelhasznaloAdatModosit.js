@@ -147,7 +147,7 @@ const FelhasznaloAdatModosit = () => {
     if (!modalInput.email || !modalInput.emailUjra) { 
       await Swal.fire({
         title: 'Hibaüzenet',
-        text: 'Add meg kétszer az új email címet!',
+        text: 'Add meg kétszer az új e-mail-címet!',
         icon: 'warning',
         confirmButtonColor: '#ff9800',
         confirmButtonText: 'OK'
@@ -157,7 +157,7 @@ const FelhasznaloAdatModosit = () => {
     if (modalInput.email !== modalInput.emailUjra) { 
       await Swal.fire({
         title: 'Hibaüzenet',
-        text: 'Az email címek nem egyeznek!',
+        text: 'Az e-mail-címek nem egyeznek!',
         icon: 'warning',
         confirmButtonColor: '#ff9800',
         confirmButtonText: 'OK'
@@ -178,7 +178,7 @@ const FelhasznaloAdatModosit = () => {
         setEmail(modalInput.email);
         await Swal.fire({
           title: 'Sikeres!',
-          text: 'Email sikeresen módosítva!',
+          text: 'E-mail-cím sikeresen módosítva!',
           icon: 'success',
           confirmButtonColor: '#4caf50',
           confirmButtonText: 'OK'
@@ -325,9 +325,9 @@ const FelhasznaloAdatModosit = () => {
       {modal === 'email' && (
         <div className="adatmodosit-modal">
           <div className="adatmodosit-modal-content">
-            <h3>Email módosítása</h3>
-            <input type="email" placeholder="Új email" value={modalInput.email} onChange={e => setModalInput(i => ({...i, email: e.target.value}))} />
-            <input type="email" placeholder="Új email újra" value={modalInput.emailUjra} onChange={e => setModalInput(i => ({...i, emailUjra: e.target.value}))} />
+            <h3>E-mail-cím módosítása</h3>
+            <input type="email" placeholder="Új e-mail-cím" value={modalInput.email} onChange={e => setModalInput(i => ({...i, email: e.target.value}))} />
+            <input type="email" placeholder="Új e-mail-cím újra" value={modalInput.emailUjra} onChange={e => setModalInput(i => ({...i, emailUjra: e.target.value}))} />
             <input type="password" placeholder="Jelenlegi jelszó" value={modalInput.regiJelszo} onChange={e => setModalInput(i => ({...i, regiJelszo: e.target.value}))} />
             <div className="modal-btns">
               <button className="modal-save-btn" onClick={async () => { await handleEmailModosit(); }}>Mentés</button>
