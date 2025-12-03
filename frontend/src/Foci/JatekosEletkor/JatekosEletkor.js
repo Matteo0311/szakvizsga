@@ -32,8 +32,13 @@ const JatekosEletkor = () => {
             const response = await fetch(Cim.Cim + "/fociJatekosAdatBetolt");
             if (response.ok) {
                 const data = await response.json();
-                // Szűrjük ki azokat, akiknek van életkora
-                const szurtData = data.filter(j => j.foci_jatekos_eletkor && j.foci_jatekos_eletkor > 0);
+                // Szűrjük ki azokat, akiknek van életkora és ID 1-76 között van
+                const szurtData = data.filter(j => 
+                    j.foci_jatekos_eletkor && 
+                    j.foci_jatekos_eletkor > 0 && 
+                    j.foci_jatekos_id >= 1 && 
+                    j.foci_jatekos_id <= 76
+                );
                 setJatekosok(szurtData);
                 
                 if (szurtData.length >= 2) {
@@ -184,6 +189,13 @@ const JatekosEletkor = () => {
                     onClick={() => !megmutat && !jatekVege && tippelés('aktual')}
                     style={{ cursor: !megmutat && !jatekVege ? 'pointer' : 'default' }}
                 >
+                    <div className="player-image">
+                        <img 
+                            src={require(`../Kepek/${aktualisJatekos.foci_jatekos_id}.jpg`)} 
+                            alt={aktualisJatekos.foci_jatekos_nev}
+                            onError={(e) => {e.target.style.display = 'none'}}
+                        />
+                    </div>
                     <div className="player-info">
                         <h2>{aktualisJatekos.foci_jatekos_nev}</h2>
                         <div className="player-value">
@@ -205,6 +217,13 @@ const JatekosEletkor = () => {
                     onClick={() => !megmutat && !jatekVege && tippelés('kovetkezo')}
                     style={{ cursor: !megmutat && !jatekVege ? 'pointer' : 'default' }}
                 >
+                    <div className="player-image">
+                        <img 
+                            src={require(`../Kepek/${kovetkezoJatekos.foci_jatekos_id}.jpg`)} 
+                            alt={kovetkezoJatekos.foci_jatekos_nev}
+                            onError={(e) => {e.target.style.display = 'none'}}
+                        />
+                    </div>
                     <div className="player-info">
                         <h2>{kovetkezoJatekos.foci_jatekos_nev}</h2>
                         <div className="player-value">

@@ -242,14 +242,26 @@
 }
 
 .player-image {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: visible;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
+}
+
+.player-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.player-card.hoverable:hover .player-image {
-    transform: scale(1.1);
+    object-position: center top;
+    border-radius: 50%;
+    clip-path: circle(50% at center);
 }
 
 .player-info {
@@ -516,8 +528,15 @@
 
     .player-card {
         width: 300px;
-        height: 320px;
-        padding: 25px;
+        height: 420px;
+        padding: 20px 20px 30px 20px;
+        padding-top: 30px;
+    }
+
+    .player-image {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 20px;
     }
 
     .player-card.clickable.hoverable::after {
@@ -525,25 +544,34 @@
     }
 
     .click-hint {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         padding: 8px 15px;
         bottom: 15px;
     }
 
     .player-info h2 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        margin-bottom: 15px;
     }
 
     .player-value {
-        min-height: 120px;
+        min-height: 100px;
+        padding: 20px;
+    }
+
+    .player-value h3 {
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
     }
 
     .player-value .value {
-        font-size: 3rem;
+        font-size: 2.8rem;
     }
 
     .player-value .value.hidden {
-        font-size: 4rem;
+        font-size: 3.2rem;
+        letter-spacing: 10px;
     }
 
     .result-message {
