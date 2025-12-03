@@ -1,6 +1,7 @@
 import Admin from "./Admin.css"
 import { useState,useEffect } from "react"
 import Cim from "../Cim"
+import Swal from 'sweetalert2'
 
 const FociJatekModosit=({kivalasztott})=>{
         const [adatok,setAdatok]=useState([])
@@ -150,7 +151,12 @@ const FociJatekModosit=({kivalasztott})=>{
 
         const UjJatekosHozzaadas = async () => {
                 if (!ujJatekos.foci_jatekos_nev) {
-                        alert('Kérlek add meg a játékos nevét!');
+                        Swal.fire({
+                                icon: 'warning',
+                                title: 'Hiányzó adat',
+                                text: 'Kérlek add meg a játékos nevét!',
+                                confirmButtonText: 'OK'
+                        });
                         return;
                 }
 
@@ -164,16 +170,31 @@ const FociJatekModosit=({kivalasztott})=>{
                         });
 
                         if (response.ok) {
-                                alert('Új játékos sikeresen hozzáadva!');
+                                Swal.fire({
+                                        icon: 'success',
+                                        title: 'Sikeres hozzáadás',
+                                        text: 'Új játékos sikeresen hozzáadva!',
+                                        confirmButtonText: 'OK'
+                                });
                                 UjJatekosFeluletBezaras();
                                 leToltes();
                         } else {
                                 const error = await response.json();
-                                alert(`Hiba történt: ${error.error}`);
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hiba',
+                                        text: `Hiba történt: ${error.error}`,
+                                        confirmButtonText: 'OK'
+                                });
                         }
                 } catch (error) {
                         console.error('Hiba történt a játékos hozzáadása során:', error);
-                        alert('Hiba történt a játékos hozzáadása során!');
+                        Swal.fire({
+                                icon: 'error',
+                                title: 'Hiba',
+                                text: 'Hiba történt a játékos hozzáadása során!',
+                                confirmButtonText: 'OK'
+                        });
                 }
         };
 
@@ -210,7 +231,12 @@ const FociJatekModosit=({kivalasztott})=>{
 
         const JatekosModositas = async () => {
                 if (!modositandoJatekos.foci_jatekos_nev) {
-                        alert('Kérlek töltsd ki legalább a játékos nevét!');
+                        Swal.fire({
+                                icon: 'warning',
+                                title: 'Hiányzó adat',
+                                text: 'Kérlek töltsd ki legalább a játékos nevét!',
+                                confirmButtonText: 'OK'
+                        });
                         return;
                 }
 
@@ -232,16 +258,31 @@ const FociJatekModosit=({kivalasztott})=>{
                         });
 
                         if (response.ok) {
-                                alert('A játékos adatai sikeresen módosítva!');
+                                Swal.fire({
+                                        icon: 'success',
+                                        title: 'Sikeres módosítás',
+                                        text: 'A játékos adatai sikeresen módosítva!',
+                                        confirmButtonText: 'OK'
+                                });
                                 ModositasFeluletBezaras();
                                 leToltes();
                         } else {
                                 const error = await response.json();
-                                alert(`Hiba történt: ${error.error}`);
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hiba',
+                                        text: `Hiba történt: ${error.error}`,
+                                        confirmButtonText: 'OK'
+                                });
                         }
                 } catch (error) {
                         console.error('Hiba történt a módosítás során:', error);
-                        alert('Hiba történt a módosítás során!');
+                        Swal.fire({
+                                icon: 'error',
+                                title: 'Hiba',
+                                text: 'Hiba történt a módosítás során!',
+                                confirmButtonText: 'OK'
+                        });
                 }
         };
 
@@ -256,15 +297,30 @@ const FociJatekModosit=({kivalasztott})=>{
                         });
 
                         if (response.ok) {
-                                alert('A játékos sikeresen törölve!');
+                                Swal.fire({
+                                        icon: 'success',
+                                        title: 'Sikeres törlés',
+                                        text: 'A játékos sikeresen törölve!',
+                                        confirmButtonText: 'OK'
+                                });
                                 leToltes();
                         } else {
                                 const error = await response.json();
-                                alert(`Hiba történt: ${error.error}`);
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hiba',
+                                        text: `Hiba történt: ${error.error}`,
+                                        confirmButtonText: 'OK'
+                                });
                         }
                 } catch (error) {
                         console.error('Hiba történt a törlés során:', error);
-                        alert('Hiba történt a törlés során!');
+                        Swal.fire({
+                                icon: 'error',
+                                title: 'Hiba',
+                                text: 'Hiba történt a törlés során!',
+                                confirmButtonText: 'OK'
+                        });
                 }
         };
 
@@ -278,16 +334,31 @@ const FociJatekModosit=({kivalasztott})=>{
                         });
 
                         if (response.ok) {
-                                alert('A játékos sikeresen törölve!');
+                                Swal.fire({
+                                        icon: 'success',
+                                        title: 'Sikeres törlés',
+                                        text: 'A játékos sikeresen törölve!',
+                                        confirmButtonText: 'OK'
+                                });
                                 ModositasFeluletBezaras();
                                 leToltes();
                         } else {
                                 const error = await response.json();
-                                alert(`Hiba történt: ${error.error}`);
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hiba',
+                                        text: `Hiba történt: ${error.error}`,
+                                        confirmButtonText: 'OK'
+                                });
                         }
                 } catch (error) {
                         console.error('Hiba történt a törlés során:', error);
-                        alert('Hiba történt a törlés során!');
+                        Swal.fire({
+                                icon: 'error',
+                                title: 'Hiba',
+                                text: 'Hiba történt a törlés során!',
+                                confirmButtonText: 'OK'
+                        });
                 }
         };
 
