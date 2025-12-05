@@ -2,26 +2,29 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import './AdminStyles.css';
+import AdminSidebar from './AdminSidebar';
 
 const Adminfelulet = () => {
     const { user } = useAuth();
     const isAdmin = user?.szerepkor === 'admin';
 
     return (
-        <div className="admin-container">
-            <div className="admin-hero">
-                <div className="admin-hero-content">
-                    <h1 className="admin-title">Adminisztráció</h1>
-                    <p className="admin-subtitle">Teljeskörű rendszerkezelés és adatszerkesztés</p>
+        <div className="admin-dashboard-container">
+            <AdminSidebar />
+            <div className="admin-main-content">
+                <div className="admin-hero">
+                    <div className="admin-hero-content">
+                        <h1 className="admin-title">Adminisztráció</h1>
+                        <p className="admin-subtitle">Teljeskörű rendszerkezelés és adatszerkesztés</p>
+                    </div>
+                    <div className="admin-hero-bg">
+                        <div className="hero-shape hero-shape-1"></div>
+                        <div className="hero-shape hero-shape-2"></div>
+                        <div className="hero-shape hero-shape-3"></div>
+                    </div>
                 </div>
-                <div className="admin-hero-bg">
-                    <div className="hero-shape hero-shape-1"></div>
-                    <div className="hero-shape hero-shape-2"></div>
-                    <div className="hero-shape hero-shape-3"></div>
-                </div>
-            </div>
 
-            <div className="admin-main">
+                <div className="admin-main">
                 <div className="admin-grid-modern">
                     <div className="admin-card-modern admin-card-active">
                         <div className="card-icon">
@@ -113,6 +116,7 @@ const Adminfelulet = () => {
                         </p>
                     </div>
                 )}
+                </div>
             </div>
         </div>
     );

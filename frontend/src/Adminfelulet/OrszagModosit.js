@@ -12,6 +12,8 @@ const OrszagModosit=({kivalasztott})=>{
     const [keresesSzoveg, setKeresesSzoveg] = useState('')
     const [keresesEredmeny, setKeresesEredmeny] = useState([])
     const [keresEsben, setKeresEsben] = useState(false)
+    const [jelenlegiOldal, setJelenlegiOldal] = useState(1)
+    const [oldalMeret] = useState(20)
     const [modositandoOrszag, setModositandoOrszag] = useState({
         orszag_id: '',
         orszag_nev: '',
@@ -88,6 +90,7 @@ const OrszagModosit=({kivalasztott})=>{
     const keresesInputValtozas = (e) => {
         const value = e.target.value;
         setKeresesSzoveg(value);
+        setJelenlegiOldal(1); // Reset to first page on search
         
         // Debounced search - keressen 300ms késleltetéssel
         clearTimeout(window.searchTimeout);
@@ -99,11 +102,34 @@ const OrszagModosit=({kivalasztott})=>{
     const keresesTorles = () => {
         setKeresesSzoveg('');
         setKeresesEredmeny([]);
+        setJelenlegiOldal(1); // Reset to first page
         clearTimeout(window.searchTimeout);
     };
 
     // Meghatározzuk, hogy melyik adatokat jelenítjük meg (keresési eredmény vagy teljes lista)
     const megjelenitoAdatok = keresesSzoveg.trim() ? keresesEredmeny : adatok;
+
+    // Pagination számítások
+    const osszesOldal = Math.ceil(megjelenitoAdatok.length / oldalMeret);
+    const kezdoIndex = (jelenlegiOldal - 1) * oldalMeret;
+    const vegIndex = kezdoIndex + oldalMeret;
+    const jelenlegiOrszagok = megjelenitoAdatok.slice(kezdoIndex, vegIndex);
+
+    const kovetkezoOldal = () => {
+        if (jelenlegiOldal < osszesOldal) {
+            setJelenlegiOldal(jelenlegiOldal + 1);
+        }
+    };
+
+    const elozoOldal = () => {
+        if (jelenlegiOldal > 1) {
+            setJelenlegiOldal(jelenlegiOldal - 1);
+        }
+    };
+
+    const ugrasoldalra = (oldalSzam) => {
+        setJelenlegiOldal(oldalSzam);
+    };
 
     // --------------------- Új ország hozzáadásának folyamata ----------------- //
 
@@ -153,12 +179,7 @@ const OrszagModosit=({kivalasztott})=>{
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    orszag_nev: ujOrszag.orszag_nev,
-                    orszag_nepesseg: ujOrszag.orszag_nepesseg,
-                    orszag_nagysag: ujOrszag.orszag_nagysag,
-                    orszag_gdp: ujOrszag.orszag_gdp,
-                }),
+                body: JSON.stringify(ujOrszag),
             });
 
             if (response.ok) {
@@ -285,6 +306,82 @@ const OrszagModosit=({kivalasztott})=>{
         }
     };
 
+    // Ország törlése
+    const OrszagTorles = async (orszag) => {
+        const megerosites = window.confirm(`Biztos, hogy törölni szeretnéd a következő országot: ${orszag.orszag_nev}?`);
+        if (!megerosites) return;
+
+        try {
+            const response = await fetch(`${Cim.Cim}/orszagTorles/${orszag.orszag_id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sikeres törlés',
+                    text: 'Az ország sikeresen törölve!',
+                    confirmButtonText: 'OK'
+                });
+                leToltes();
+            } else {
+                const error = await response.json();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hiba',
+                    text: `Hiba történt: ${error.error}`,
+                    confirmButtonText: 'OK'
+                });
+            }
+        } catch (error) {
+            console.error('Hiba történt a törlés során:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hiba',
+                text: 'Hiba történt a törlés során!',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+
+    const OrszagTorlesModositasFeluletrol = async () => {
+        const megerosites = window.confirm(`Biztos, hogy törölni szeretnéd a következő országot: ${modositandoOrszag.orszag_nev}?`);
+        if (!megerosites) return;
+
+        try {
+            const response = await fetch(`${Cim.Cim}/orszagTorles/${modositandoOrszag.orszag_id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sikeres törlés',
+                    text: 'Az ország sikeresen törölve!',
+                    confirmButtonText: 'OK'
+                });
+                ModositasFeluletBezaras();
+                leToltes();
+            } else {
+                const error = await response.json();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hiba',
+                    text: `Hiba történt: ${error.error}`,
+                    confirmButtonText: 'OK'
+                });
+            }
+        } catch (error) {
+            console.error('Hiba történt a törlés során:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Hiba',
+                text: 'Hiba történt a törlés során!',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+
     // --------------------- Tartalom ----------------- //
 
     if (tolt)
@@ -352,6 +449,7 @@ const OrszagModosit=({kivalasztott})=>{
                   <button className="admin-button" onClick={OrszagModositas}>
                     Módosítások mentése
                   </button>
+                  <button className="admin-button torles" style={{backgroundColor: '#dc3545'}} onClick={OrszagTorlesModositasFeluletrol}>Törlés</button>
                   <button className="admin-button visszavon" onClick={ModositasFeluletBezaras}>
                     Mégsem
                   </button>
@@ -470,10 +568,10 @@ const OrszagModosit=({kivalasztott})=>{
                       </tr>
                   </thead>
                   <tbody>
-                      {megjelenitoAdatok.length > 0 ? (
-                        megjelenitoAdatok.map((elem,index)=>(
+                      {jelenlegiOrszagok.length > 0 ? (
+                        jelenlegiOrszagok.map((elem,index)=>(
                             <tr key={elem.orszag_id} className="adat-sor">
-                                <td style={{textAlign: 'center'}}>{keresesSzoveg.trim() ? elem.orszag_id : index + 1}</td>
+                                <td style={{textAlign: 'center'}}>{keresesSzoveg.trim() ? elem.orszag_id : kezdoIndex + index + 1}</td>
                                 <td className="orszag-nev" style={{textAlign: 'left'}}>{elem.orszag_nev}</td>
                                 <td className="szam-adat" style={{textAlign: 'right'}}>{elem.orszag_nepesseg.toLocaleString()} fő</td>
                                 <td className="szam-adat" style={{textAlign: 'right'}}>{elem.orszag_nagysag.toLocaleString()} km²</td>
@@ -491,6 +589,64 @@ const OrszagModosit=({kivalasztott})=>{
                   </tbody>
               </table>
             </div>
+            
+            {osszesOldal > 1 && (
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                    <button 
+                        className="admin-button" 
+                        onClick={elozoOldal} 
+                        disabled={jelenlegiOldal === 1}
+                        style={{ opacity: jelenlegiOldal === 1 ? 0.5 : 1 }}
+                    >
+                        ← Előző
+                    </button>
+                    
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                        {[...Array(osszesOldal)].map((_, index) => {
+                            const oldalSzam = index + 1;
+                            // Show first page, last page, current page, and pages around current
+                            if (
+                                oldalSzam === 1 || 
+                                oldalSzam === osszesOldal || 
+                                (oldalSzam >= jelenlegiOldal - 1 && oldalSzam <= jelenlegiOldal + 1)
+                            ) {
+                                return (
+                                    <button
+                                        key={oldalSzam}
+                                        className="admin-button"
+                                        onClick={() => ugrasoldalra(oldalSzam)}
+                                        style={{
+                                            backgroundColor: jelenlegiOldal === oldalSzam ? '#0066cc' : '#28a745',
+                                            minWidth: '40px'
+                                        }}
+                                    >
+                                        {oldalSzam}
+                                    </button>
+                                );
+                            } else if (
+                                oldalSzam === jelenlegiOldal - 2 || 
+                                oldalSzam === jelenlegiOldal + 2
+                            ) {
+                                return <span key={oldalSzam} style={{ padding: '0 5px' }}>...</span>;
+                            }
+                            return null;
+                        })}
+                    </div>
+
+                    <button 
+                        className="admin-button" 
+                        onClick={kovetkezoOldal} 
+                        disabled={jelenlegiOldal === osszesOldal}
+                        style={{ opacity: jelenlegiOldal === osszesOldal ? 0.5 : 1 }}
+                    >
+                        Következő →
+                    </button>
+                    
+                    <span style={{ marginLeft: '15px', color: '#666' }}>
+                        {jelenlegiOldal}. oldal / {osszesOldal}
+                    </span>
+                </div>
+            )}
             
             <div style={{ marginTop: '20px', textAlign: 'center' }}>
               <button className="admin-button" onClick={() => window.history.back()}>Visszatérés az adminfelületre</button>

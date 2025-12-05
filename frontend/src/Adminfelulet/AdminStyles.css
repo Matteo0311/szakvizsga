@@ -1,4 +1,32 @@
 /* Admin témakezelés CSS változókkal */
+body {
+  overflow-x: hidden;
+}
+
+/* Admin Dashboard Container - hasonló a User profilhoz */
+.admin-dashboard-container {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.admin-main-content {
+  flex: 1;
+  margin-left: 90px;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
 :root[data-theme="dark"] {
   --bg-primary: #1a1a1a;
   --bg-secondary: #2d2d2d;
