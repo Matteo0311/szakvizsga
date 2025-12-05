@@ -32,8 +32,8 @@ const FC26Ertekeles = () => {
             const response = await fetch(Cim.Cim + "/fociJatekosAdatBetolt");
             if (response.ok) {
                 const data = await response.json();
-                // Szűrjük ki azokat, akiknek van FC26 értékelése
-                const szurtData = data.filter(j => j.foci_jatekos_ertekeles && j.foci_jatekos_ertekeles > 0);
+                // Szűrjük ki azokat, akiknek van FC26 értékelése és csak az első 76-ot töltsük be
+                const szurtData = data.filter(j => j.foci_jatekos_ertekeles && j.foci_jatekos_ertekeles > 0).slice(0, 146);
                 setJatekosok(szurtData);
                 
                 if (szurtData.length >= 2) {
@@ -184,6 +184,18 @@ const FC26Ertekeles = () => {
                     onClick={() => !megmutat && !jatekVege && tippelés('aktual')}
                     style={{ cursor: !megmutat && !jatekVege ? 'pointer' : 'default' }}
                 >
+                    <div className="player-image-container">
+                        <img 
+                            src={require(`../Kepek/${aktualisJatekos.foci_jatekos_id}.jpg`)}
+                            alt={aktualisJatekos.foci_jatekos_nev}
+                            className="player-image"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.style.padding = '20px';
+                                e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230d1117"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/><circle cx="12" cy="12" r="1.5" fill="%23fbbf24"/><path d="M12 8l-1.5 2.5h3L12 8zm-3 6l1.5-2.5-1.5-2.5-1.5 2.5L9 14zm6 0l-1.5-2.5 1.5-2.5 1.5 2.5L15 14z" fill="%23fbbf24" opacity="0.7"/></svg>';
+                            }}
+                        />
+                    </div>
                     <div className="player-info">
                         <h2>{aktualisJatekos.foci_jatekos_nev}</h2>
                         <div className="player-value">
@@ -205,6 +217,18 @@ const FC26Ertekeles = () => {
                     onClick={() => !megmutat && !jatekVege && tippelés('kovetkezo')}
                     style={{ cursor: !megmutat && !jatekVege ? 'pointer' : 'default' }}
                 >
+                    <div className="player-image-container">
+                        <img 
+                            src={require(`../Kepek/${kovetkezoJatekos.foci_jatekos_id}.jpg`)}
+                            alt={kovetkezoJatekos.foci_jatekos_nev}
+                            className="player-image"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.style.padding = '20px';
+                                e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230d1117"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/><circle cx="12" cy="12" r="1.5" fill="%23fbbf24"/><path d="M12 8l-1.5 2.5h3L12 8zm-3 6l1.5-2.5-1.5-2.5-1.5 2.5L9 14zm6 0l-1.5-2.5 1.5-2.5 1.5 2.5L15 14z" fill="%23fbbf24" opacity="0.7"/></svg>';
+                            }}
+                        />
+                    </div>
                     <div className="player-info">
                         <h2>{kovetkezoJatekos.foci_jatekos_nev}</h2>
                         <div className="player-value">
