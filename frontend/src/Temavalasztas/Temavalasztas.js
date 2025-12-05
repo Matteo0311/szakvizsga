@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './TemavalasztasStyles.css';
 import { IoFootball } from 'react-icons/io5';
 import { FaGlobeEurope, FaMusic } from 'react-icons/fa';
+import UserSidebar from '../userfelulet/UserSidebar';
 
 const themes = [
     {
@@ -69,10 +70,13 @@ const Temavalasztas = () => {
     };
 
     return (
-        <div className="temavalasztas-container">
-            <h1 className="page-title">🎯 Témaválasztás</h1>
-            <br />
-            <p className="page-description">Válaszd ki a játék témáját az alábbi lehetőségek közül!</p>
+        <div className="dashboard-container">
+            <UserSidebar />
+            <div className="main-content">
+                <div className="temavalasztas-container">
+                    <h1 className="page-title">🎯 Témaválasztás</h1>
+                    <br />
+                    <p className="page-description">Válaszd ki a játék témáját az alábbi lehetőségek közül!</p>
             {!selectedTheme ? (
                 <div className="theme-list">
                     {themes.map((theme) => (
@@ -106,6 +110,8 @@ const Temavalasztas = () => {
                     ))}
                 </div>
             )}
+                </div>
+            </div>
         </div>
     );
 };
