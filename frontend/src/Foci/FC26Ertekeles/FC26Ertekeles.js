@@ -32,8 +32,18 @@ const FC26Ertekeles = () => {
             const response = await fetch(Cim.Cim + "/fociJatekosAdatBetolt");
             if (response.ok) {
                 const data = await response.json();
+<<<<<<< HEAD
                 // Szűrjük ki azokat, akiknek van FC26 értékelése és csak az első 76-ot töltsük be
                 const szurtData = data.filter(j => j.foci_jatekos_ertekeles && j.foci_jatekos_ertekeles > 0).slice(0, 146);
+=======
+                // Szűrjük ki azokat, akiknek van FC26 értékelése és ID 1-76 között van
+                const szurtData = data.filter(j => 
+                    j.foci_jatekos_ertekeles && 
+                    j.foci_jatekos_ertekeles > 0 && 
+                    j.foci_jatekos_id >= 1 && 
+                    j.foci_jatekos_id <= 76
+                );
+>>>>>>> af4dc2041c9c2f5ea855c62bd90ff734bd4e55d1
                 setJatekosok(szurtData);
                 
                 if (szurtData.length >= 2) {
@@ -184,6 +194,7 @@ const FC26Ertekeles = () => {
                     onClick={() => !megmutat && !jatekVege && tippelés('aktual')}
                     style={{ cursor: !megmutat && !jatekVege ? 'pointer' : 'default' }}
                 >
+<<<<<<< HEAD
                     <div className="player-image-container">
                         <img 
                             src={require(`../Kepek/${aktualisJatekos.foci_jatekos_id}.jpg`)}
@@ -194,6 +205,13 @@ const FC26Ertekeles = () => {
                                 e.target.style.padding = '20px';
                                 e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230d1117"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/><circle cx="12" cy="12" r="1.5" fill="%23fbbf24"/><path d="M12 8l-1.5 2.5h3L12 8zm-3 6l1.5-2.5-1.5-2.5-1.5 2.5L9 14zm6 0l-1.5-2.5 1.5-2.5 1.5 2.5L15 14z" fill="%23fbbf24" opacity="0.7"/></svg>';
                             }}
+=======
+                    <div className="player-image">
+                        <img 
+                            src={require(`../Kepek/${aktualisJatekos.foci_jatekos_id}.jpg`)} 
+                            alt={aktualisJatekos.foci_jatekos_nev}
+                            onError={(e) => {e.target.style.display = 'none'}}
+>>>>>>> af4dc2041c9c2f5ea855c62bd90ff734bd4e55d1
                         />
                     </div>
                     <div className="player-info">
@@ -217,6 +235,7 @@ const FC26Ertekeles = () => {
                     onClick={() => !megmutat && !jatekVege && tippelés('kovetkezo')}
                     style={{ cursor: !megmutat && !jatekVege ? 'pointer' : 'default' }}
                 >
+<<<<<<< HEAD
                     <div className="player-image-container">
                         <img 
                             src={require(`../Kepek/${kovetkezoJatekos.foci_jatekos_id}.jpg`)}
@@ -227,6 +246,13 @@ const FC26Ertekeles = () => {
                                 e.target.style.padding = '20px';
                                 e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230d1117"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/><circle cx="12" cy="12" r="1.5" fill="%23fbbf24"/><path d="M12 8l-1.5 2.5h3L12 8zm-3 6l1.5-2.5-1.5-2.5-1.5 2.5L9 14zm6 0l-1.5-2.5 1.5-2.5 1.5 2.5L15 14z" fill="%23fbbf24" opacity="0.7"/></svg>';
                             }}
+=======
+                    <div className="player-image">
+                        <img 
+                            src={require(`../Kepek/${kovetkezoJatekos.foci_jatekos_id}.jpg`)} 
+                            alt={kovetkezoJatekos.foci_jatekos_nev}
+                            onError={(e) => {e.target.style.display = 'none'}}
+>>>>>>> af4dc2041c9c2f5ea855c62bd90ff734bd4e55d1
                         />
                     </div>
                     <div className="player-info">

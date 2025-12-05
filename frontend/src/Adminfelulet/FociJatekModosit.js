@@ -468,25 +468,26 @@ const FociJatekModosit=({kivalasztott})=>{
 
                         <div className="table-container">
                           <table className="adat-tablazat">
-                                          <thead>
-                                            <tr>
-                                                    <th className="index-column">#</th>
-                                                    <th>Név</th>
-                                                    <th>Értékelés</th>
-                                                    <th>Piaci érték</th>
-                                                    <th>Életkor</th>
-                                                    <th>Műveletek</th>
-                                            </tr>                          </thead>
-                          <tbody>
+                                <thead>
+                                  <tr>
+                                    <th className="index-column" style={{textAlign: 'center'}}>#</th>
+                                    <th style={{textAlign: 'left'}}>Név</th>
+                                    <th style={{textAlign: 'center'}}>Értékelés</th>
+                                    <th style={{textAlign: 'center'}}>Piaci érték</th>
+                                    <th style={{textAlign: 'center'}}>Életkor</th>
+                                    <th style={{textAlign: 'center'}}>Műveletek</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
                             {jelenlegiJatekosok.length > 0 ? (
                                     jelenlegiJatekosok.map((elem,index)=>(
                                         <tr key={elem.foci_jatekos_id || index} className="adat-sor">
-                                                <td>{keresesSzoveg.trim() ? elem.foci_jatekos_id : kezdoIndex + index + 1}</td>
-                                                <td className="orszag-nev">{elem.foci_jatekos_nev}</td>
-                                                <td className="szam-adat">{elem.foci_jatekos_ertekeles ?? '-'}</td>
-                                                <td className="szam-adat">{formatMillio(elem.foci_jatekos_piaci_ertek)}</td>
-                                                <td className="szam-adat">{elem.foci_jatekos_eletkor ?? '-'}</td>
-                                                <td><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
+                                                <td style={{textAlign: 'center'}}>{keresesSzoveg.trim() ? elem.foci_jatekos_id : kezdoIndex + index + 1}</td>
+                                                <td className="orszag-nev" style={{textAlign: 'left'}}>{elem.foci_jatekos_nev}</td>
+                                                <td className="szam-adat" style={{textAlign: 'center'}}>{elem.foci_jatekos_ertekeles ?? '-'}</td>
+                                                <td className="szam-adat" style={{textAlign: 'center'}}>{formatMillio(elem.foci_jatekos_piaci_ertek)}</td>
+                                                <td className="szam-adat" style={{textAlign: 'center'}}>{elem.foci_jatekos_eletkor ?? '-'}</td>
+                                                <td style={{textAlign: 'center'}}><button className="torles-gomb" onClick={() => ModositasFeluletMegnyitas(elem)}>Szerkesztés</button></td>
                                         </tr>
                                     ))
                             ) : (
